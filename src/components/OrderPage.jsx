@@ -443,6 +443,8 @@ export default function WaterDeliverySite() {
             onClick={async () => {
               setBusy(true);
               setCheckoutError(null);
+              try { window.fbq && window.fbq("track", "InitiateCheckout", { value: total, currency: "USD" }); } catch {}
+              try { window.gtag && window.gtag("event", "begin_checkout", { value: total, currency: "USD" }); } catch {}
               try {
                 const res = await fetch("/api/checkout", {
                   method: "POST",

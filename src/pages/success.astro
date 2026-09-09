@@ -1,9 +1,11 @@
 ---
 const sessionId = Astro.url.searchParams.get("session_id");
 const isTasting = Astro.url.searchParams.get("tasting") === "1";
+import SiteHead from "../components/SiteHead.astro";
 ---
 <html lang="en">
   <head>
+    <SiteHead />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Welcome to Sorgente</title>
@@ -24,5 +26,20 @@ const isTasting = Astro.url.searchParams.get("tasting") === "1";
         matthew@growpalmbeach.com {sessionId ? "· ref " + sessionId.slice(-8) : ""}
       </p>
     </div>
+  <script is:inline>
+      (function () {
+        var isTasting = new URLSearchParams(location.search).get("tasting") === "1";
+        var sid = new URLSearchParams(location.search).get("session_id") || undefined;
+        try {
+          if (window.fbq) {
+            if (isTasting) fbq("track", "Purchase", { value: 50, currency: "USD" }, { eventID: sid });
+            else fbq("track", "Subscribe", {}, { eventID: sid });
+          }
+        } catch (e) {}
+        try {
+          if (window.gtag) gtag("event", "purchase", { transaction_id: sid, currency: "USD", value: isTasting ? 50 : undefined });
+        } catch (e) {}
+      })();
+    </script>
   </body>
 </html>

@@ -79,6 +79,8 @@ export default function TastingFlow() {
     if (phone.replace(/\D/g, "").length < 10) { setError("Add a mobile number — it's how we coordinate delivery."); return; }
     setError(null);
     setBusy(true);
+    try { window.fbq && window.fbq("track", "InitiateCheckout", { value: 50, currency: "USD" }); } catch {}
+    try { window.gtag && window.gtag("event", "begin_checkout", { value: 50, currency: "USD" }); } catch {}
     try {
       const res = await fetch("/api/tasting-checkout", {
         method: "POST",
