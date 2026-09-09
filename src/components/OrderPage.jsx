@@ -165,7 +165,7 @@ export default function WaterDeliverySite() {
           {SKUS.map((s) => (
             <div key={s.id} style={{ background: qty[s.id] > 0 ? C.mist : "#fff", padding: "26px 24px", transition: "background .25s", display: "flex", flexDirection: "column" }}>
               <img src={s.img} alt={`${s.brand} ${s.detail}`} loading="lazy"
-                style={{ width: "100%", height: 210, objectFit: "cover", objectPosition: "center 62%", borderRadius: 2, display: "block" }} />
+                style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", borderRadius: 2, display: "block" }} />
               <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginTop: 16 }}>
                 <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 26, fontWeight: 600, color: C.bottle }}>{s.brand}</div>
                 <span style={{
