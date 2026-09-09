@@ -32,8 +32,10 @@ export const POST: APIRoute = async ({ request }) => {
       const session = event.data.object as Stripe.Checkout.Session;
       // New customer: session.customer_details has name/email/phone,
       // session.metadata.first_delivery_date has the date they picked.
+      const tag = session.metadata?.tasting === "1" ? "TASTING CASE ORDER:" : "NEW SUBSCRIPTION:";
       console.log(
-        "NEW SUBSCRIPTION:",
+        tag,
+        JSON.stringify(session.metadata ?? {}),
         session.customer_details?.name,
         session.customer_details?.email,
         "first delivery:",

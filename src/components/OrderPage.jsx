@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 
 // ————— Design tokens —————
 // Palette: glass green + cool water tints, luxury coastal
@@ -95,6 +95,54 @@ function startOfDay(d) {
   return x;
 }
 
+
+function TastingPopup() {
+  const [show, setShow] = useState(false);
+  const [addr, setAddr] = useState("");
+  useEffect(() => {
+    try { if (localStorage.getItem("sorgente_tasting_seen")) return; } catch {}
+    const timer = setTimeout(() => setShow(true), 7000);
+    const exit = (e) => { if (e.clientY <= 0) { setShow(true); } };
+    document.addEventListener("mouseleave", exit);
+    return () => { clearTimeout(timer); document.removeEventListener("mouseleave", exit); };
+  }, []);
+  const dismiss = () => {
+    setShow(false);
+    try { localStorage.setItem("sorgente_tasting_seen", "1"); } catch {}
+  };
+  if (!show) return null;
+  return (
+    <div onClick={dismiss} style={{ position: "fixed", inset: 0, background: "rgba(20,43,36,0.42)", zIndex: 60, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ background: "#FBFCFB", borderRadius: 3, maxWidth: 440, width: "100%", padding: "40px 36px", boxShadow: "0 30px 80px rgba(20,43,36,0.3)" }}>
+        <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 32, fontWeight: 500, color: "#142B24", lineHeight: 1.15 }}>
+          Begin with a tasting.
+        </div>
+        <p style={{ color: "#5B6D66", fontSize: 15, lineHeight: 1.65, marginTop: 12, fontWeight: 300 }}>
+          Six fine waters in glass — evian, Acqua Panna, S.Pellegrino, Saratoga — delivered
+          to your door. $50, credited in full toward your first month.
+        </p>
+        <input
+          value={addr}
+          onChange={(e) => setAddr(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter" && addr.trim()) { try { localStorage.setItem("sorgente_tasting_seen", "1"); } catch {}; window.location.href = "/tasting?addr=" + encodeURIComponent(addr); } }}
+          placeholder="Street address & zip"
+          style={{ width: "100%", boxSizing: "border-box", padding: "13px 15px", fontSize: 15.5, fontFamily: "'Jost', sans-serif", border: "1px solid #C9D6D1", borderRadius: 2, marginTop: 18, outline: "none" }}
+        />
+        <div style={{ display: "flex", alignItems: "center", gap: 18, marginTop: 16 }}>
+          <button
+            onClick={() => { if (!addr.trim()) return; try { localStorage.setItem("sorgente_tasting_seen", "1"); } catch {}; window.location.href = "/tasting?addr=" + encodeURIComponent(addr); }}
+            style={{ background: "#1E3D33", color: "#fff", border: "none", borderRadius: 999, padding: "13px 26px", fontSize: 14.5, fontFamily: "'Jost', sans-serif", cursor: "pointer" }}>
+            Check my route
+          </button>
+          <button onClick={dismiss} style={{ background: "none", border: "none", color: "#5B6D66", fontSize: 13.5, cursor: "pointer", fontFamily: "'Jost', sans-serif", padding: 0 }}>
+            No thanks, just looking
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function WaterDeliverySite() {
   const today = startOfDay(new Date());
   const minDate = new Date(today.getTime() + 2 * DAY_MS); // 48-hour lead
@@ -138,6 +186,7 @@ export default function WaterDeliverySite() {
   return (
     <div style={{ minHeight: "100vh", background: C.paper, color: C.ink, fontFamily: "'Jost', sans-serif" }}>
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+      <TastingPopup />
 
       {/* Masthead */}
       <header style={{ padding: "26px 24px 0", maxWidth: 1080, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
@@ -165,6 +214,11 @@ export default function WaterDeliverySite() {
             <p style={{ fontSize: 15, marginTop: 22 }}>
               <a href="sms:+15614010695" style={{ color: C.bottle, textDecoration: "none", borderBottom: `1px solid ${C.line}` }}>
                 Text us anytime — (561) 401-0695
+              </a>
+            </p>
+            <p style={{ fontSize: 15, marginTop: 10 }}>
+              <a href="/tasting" style={{ color: C.sub, textDecoration: "none", borderBottom: `1px solid ${C.line}` }}>
+                New here? Begin with a $50 Tasting Case →
               </a>
             </p>
           </div>
@@ -332,7 +386,7 @@ export default function WaterDeliverySite() {
             {busy ? "Opening secure checkout…" : ready ? `Continue to payment — ${fmt(total)}/month` : "Choose cases and a delivery date"}
           </button>
           {checkoutError && (
-            <p style={{ fontSize: 13.5, color: "#8C3B33", marginTop: 12 }}>{checkoutError} Try again, or write hello@sorgentepb.com.</p>
+            <p style={{ fontSize: 13.5, color: "#8C3B33", marginTop: 12 }}>{checkoutError} Try again, or write matthew@growpalmbeach.com.</p>
           )}
           <p style={{ fontSize: 12.5, color: C.sub, marginTop: 12 }}>
             Billed monthly via Stripe secure checkout. Pause for travel or cancel anytime with two days' notice.
@@ -441,7 +495,7 @@ export default function WaterDeliverySite() {
 
       <footer style={{ borderTop: `1px solid ${C.line}`, padding: "26px 24px", maxWidth: 1080, margin: "0 auto", display: "flex", justifyContent: "space-between", fontSize: 13, color: C.sub }}>
         <span>Sorgente — private water delivery</span>
-        <span><a href="sms:+15614010695" style={{ color: "inherit", textDecoration: "none" }}>(561) 401-0695</a> · <a href="/policies" style={{ color: "inherit", textDecoration: "none" }}>Policies</a> · hello@sorgentepb.com</span>
+        <span><a href="sms:+15614010695" style={{ color: "inherit", textDecoration: "none" }}>(561) 401-0695</a> · <a href="/policies" style={{ color: "inherit", textDecoration: "none" }}>Policies</a> · matthew@growpalmbeach.com</span>
       </footer>
     </div>
   );

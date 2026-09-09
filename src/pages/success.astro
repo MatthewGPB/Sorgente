@@ -1,5 +1,6 @@
 ---
 const sessionId = Astro.url.searchParams.get("session_id");
+const isTasting = Astro.url.searchParams.get("tasting") === "1";
 ---
 <html lang="en">
   <head>
@@ -12,15 +13,15 @@ const sessionId = Astro.url.searchParams.get("session_id");
   <body style="margin:0; min-height:100vh; background:#FBFCFB; display:flex; align-items:center; justify-content:center; font-family:'Jost',sans-serif; padding:24px;">
     <div style="max-width:460px; text-align:center;">
       <div style="font-family:'Cormorant Garamond',serif; font-size:42px; color:#1E3D33; font-weight:500; line-height:1.15;">
-        Your first delivery is set.
+        {isTasting ? "Your Tasting Case is reserved." : "Your first delivery is set."}
       </div>
       <p style="color:#5B6D66; font-size:16px; line-height:1.7; margin-top:18px;">
-        Thank you — your subscription is active. We'll confirm your first delivery
-        by email shortly, carry everything to your pantry on the day, and repeat
-        monthly. Traveling? Just write us and we'll hold your deliveries.
+        {isTasting
+          ? "Watch for a text from (561) 401-0695 confirming your delivery day. Reply there with any gate codes or a preferred drop spot — and remember, your $50 is credited in full toward your first month."
+          : "Thank you — your subscription is active. We'll confirm your first delivery by email shortly, carry everything to your pantry on the day, and repeat monthly. Traveling? Just write us and we'll hold your deliveries."}
       </p>
       <p style="color:#8FA39B; font-size:13px; margin-top:22px;">
-        hello@sorgentepb.com {sessionId ? "· ref " + sessionId.slice(-8) : ""}
+        matthew@growpalmbeach.com {sessionId ? "· ref " + sessionId.slice(-8) : ""}
       </p>
     </div>
   </body>
