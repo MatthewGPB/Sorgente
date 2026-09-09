@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import Stripe from "stripe";
 import priceMap from "../../../stripe-prices.json";
+import { zipInZone, routeFor, DAY_INDEX } from "../../lib/routes.js";
 
 export const prerender = false;
 
@@ -35,12 +36,17 @@ export const POST: APIRoute = async ({ request, url }) => {
     return json({ error: `Deliveries begin at ${MIN_CASES} cases.` }, 400);
   }
 
-  // Enforce the 48-hour delivery lead server-side too
+  // Enforce the 48-hour lead AND the zip's route day server-side
+  const zip = String(body.zip ?? "");
+  if (!/^\d{5}$/.test(zip) || !zipInZone(zip)) {
+    return json({ error: "Enter a zip code inside our delivery area." }, 400);
+  }
+  const routeDay = routeFor(zip);
   const d = new Date(deliveryDate + "T12:00:00");
   const minDate = new Date(Date.now() + 2 * 86400000);
   minDate.setHours(0, 0, 0, 0);
-  if (isNaN(d.getTime()) || d < minDate) {
-    return json({ error: "Please choose a delivery date at least two days out." }, 400);
+  if (isNaN(d.getTime()) || d < minDate || d.getDay() !== DAY_INDEX[routeDay]) {
+    return json({ error: `Choose an upcoming ${routeDay} — that's your street's route day.` }, 400);
   }
 
   try {
@@ -50,9 +56,9 @@ export const POST: APIRoute = async ({ request, url }) => {
       // Estate rate: 10% off (= $45/case) when the combined order is 10+ cases
       ...(totalCases >= ESTATE_AT ? { discounts: [{ coupon: priceMap.coupon }] } : {}),
       subscription_data: {
-        metadata: { first_delivery_date: deliveryDate, total_cases: String(totalCases) },
+        metadata: { first_delivery_date: deliveryDate, total_cases: String(totalCases), zip, route_day: routeDay },
       },
-      metadata: { first_delivery_date: deliveryDate },
+      metadata: { first_delivery_date: deliveryDate, zip, route_day: routeDay },
       billing_address_collection: "required",
       shipping_address_collection: { allowed_countries: ["US"] },
       phone_number_collection: { enabled: true },

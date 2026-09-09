@@ -1,29 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { zipInZone, routeFor, nextRouteDate } from "../lib/routes.js";
 
 const C = {
   ink: "#16211D", bottle: "#1E3D33", bottleDeep: "#142B24",
   mist: "#EDF3F1", paper: "#FBFCFB", line: "#C9D6D1", sub: "#5B6D66",
 };
 
-// Palm Beach County (plus Jupiter Island / Hobe Sound edge)
-function zipInZone(zip) {
-  const z = parseInt(zip, 10);
-  return (z >= 33401 && z <= 33499) || z === 33455 || z === 33475;
-}
-const ROUTE_DAYS = ["Tuesday", "Thursday", "Saturday"];
-const DAY_INDEX = { Tuesday: 2, Thursday: 4, Saturday: 6 };
-
-function routeFor(zip) {
-  return ROUTE_DAYS[parseInt(zip, 10) % 3];
-}
-function nextRouteDate(dayName) {
-  const min = new Date(Date.now() + 2 * 86400000);
-  min.setHours(0, 0, 0, 0);
-  const target = DAY_INDEX[dayName];
-  const d = new Date(min);
-  while (d.getDay() !== target) d.setDate(d.getDate() + 1);
-  return d;
-}
 function streetName(address) {
   const m = address.trim().replace(/^[0-9-\s]+/, "").split(",")[0].trim();
   return m || "your street";

@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
+import { zipInZone, routeFor, DAY_INDEX } from "../lib/routes.js";
 
 // ————— Design tokens —————
 // Palette: glass green + cool water tints, luxury coastal
@@ -150,15 +151,21 @@ export default function WaterDeliverySite() {
   const [qty, setQty] = useState(() => Object.fromEntries(SKUS.map((s) => [s.id, 0])));
   const [viewMonth, setViewMonth] = useState(new Date(minDate.getFullYear(), minDate.getMonth(), 1));
   const [selected, setSelected] = useState(null);
+  const [zip, setZip] = useState("");
   const [busy, setBusy] = useState(false);
   const [checkoutError, setCheckoutError] = useState(null);
 
   const totalCases = SKUS.reduce((sum, s) => sum + qty[s.id], 0);
+  const zipValid = /^\d{5}$/.test(zip);
+  const zipServed = zipValid && zipInZone(zip);
+  const routeDay = zipServed ? routeFor(zip) : null;
   const perCase = totalCases >= TIER_AT ? TIER_PRICE : BASE_PRICE;
   const total = totalCases * perCase;
   const savings = totalCases >= TIER_AT ? totalCases * (BASE_PRICE - TIER_PRICE) : 0;
   const belowMin = totalCases > 0 && totalCases < MIN_CASES;
-  const ready = totalCases >= MIN_CASES && selected;
+  const ready = totalCases >= MIN_CASES && selected && zipServed;
+
+  useEffect(() => { setSelected(null); }, [routeDay]);
 
   const change = (id, delta) =>
     setQty((q) => ({ ...q, [id]: Math.max(0, q[id] + delta) }));
@@ -242,6 +249,64 @@ export default function WaterDeliverySite() {
         </div>
       </section>
 
+      {/* The Waters */}
+      <section style={{ background: C.mist, padding: "72px 24px", marginBottom: 72 }}>
+        <div style={{ maxWidth: 1080, margin: "0 auto" }}>
+          <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 32, fontWeight: 500, color: C.bottleDeep }}>
+            The Waters
+          </div>
+          <p style={{ fontSize: 16, lineHeight: 1.75, color: C.sub, maxWidth: 620, marginTop: 14, fontWeight: 300 }}>
+            Still water has terroir. Every spring carries the minerals of the rock it rose through,
+            and the difference is on the palate — from featherlight to full-bodied. Palm Beach tap
+            is perfectly safe; it's just not what you want at a dinner table. These four cover the
+            whole spectrum.
+          </p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: 1, background: C.line, border: `1px solid ${C.line}`, marginTop: 36 }}>
+            {[
+              {
+                brand: "Saratoga", origin: "Saratoga Springs, NY — since 1872",
+                weight: "Featherlight", stats: "TDS under 150 · pH 6.4–6.7",
+                note: "Clean and slightly sweet with a crisp finish — the closest water comes to weightless.",
+                serve: "Sushi, oysters, delicate fish",
+              },
+              {
+                brand: "Acqua Panna", origin: "Tuscany — a 14-year journey through the hills",
+                weight: "Soft", stats: "TDS ~150 · naturally alkaline",
+                note: "Velvety and smooth — rounds off acidity and never competes with the wine.",
+                serve: "White fish, salads, fine wine",
+              },
+              {
+                brand: "evian", origin: "French Alps — 15 years through glacial rock",
+                weight: "Balanced", stats: "TDS 345 · pH 7.2",
+                note: "Calcium and magnesium in easy proportion — neutral, complete, the house pour.",
+                serve: "Every day, every table",
+              },
+              {
+                brand: "S.Pellegrino", origin: "San Pellegrino Terme — since 1899",
+                weight: "Full-bodied", stats: "TDS 854 · fine bubbles",
+                note: "Calcium- and sulfate-rich with a structured, saline edge — built for the table.",
+                serve: "Rich dishes, aperitivo hour",
+              },
+            ].map((w) => (
+              <div key={w.brand} style={{ background: "#fff", padding: "28px 24px" }}>
+                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 15, color: C.sub, letterSpacing: "0.14em", textTransform: "uppercase" }}>{w.weight}</div>
+                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 25, fontWeight: 600, color: C.bottle, marginTop: 6 }}>{w.brand}</div>
+                <div style={{ fontSize: 13, color: C.sub, marginTop: 4 }}>{w.origin}</div>
+                <div style={{ fontSize: 13.5, color: C.bottle, marginTop: 12, letterSpacing: "0.03em" }}>{w.stats}</div>
+                <p style={{ fontSize: 14.5, lineHeight: 1.65, color: C.ink, marginTop: 10, fontWeight: 300 }}>{w.note}</p>
+                <div style={{ fontSize: 13, color: C.sub, marginTop: 12, borderTop: `1px solid ${C.mist}`, paddingTop: 10 }}>
+                  Serve with — {w.serve}
+                </div>
+              </div>
+            ))}
+          </div>
+          <p style={{ fontSize: 12.5, color: C.sub, marginTop: 16 }}>
+            Mineral figures from each producer's published water analysis. Most homes run one still
+            for every day, a second for the table, and S.Pellegrino for guests.
+          </p>
+        </div>
+      </section>
+
       {/* Order builder */}
       <section style={{ maxWidth: 1080, margin: "0 auto", padding: "0 24px 100px", display: "grid", gridTemplateColumns: "1fr", gap: 40 }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 1, background: C.line, border: `1px solid ${C.line}` }}>
@@ -306,7 +371,24 @@ export default function WaterDeliverySite() {
           {/* Calendar */}
           <div style={{ borderTop: `2px solid ${C.bottle}`, paddingTop: 22 }}>
             <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, color: C.bottle, fontWeight: 600 }}>First delivery date</div>
-            <p style={{ fontSize: 13.5, color: C.sub, marginTop: 6 }}>We prepare each order by hand — the earliest delivery is two days out.</p>
+            <p style={{ fontSize: 13.5, color: C.sub, marginTop: 6 }}>We deliver by neighborhood route. Enter your zip to see your route days.</p>
+            <input
+              value={zip}
+              onChange={(e) => setZip(e.target.value.replace(/\D/g, "").slice(0, 5))}
+              placeholder="Zip code — 33480"
+              inputMode="numeric"
+              style={{ width: 160, boxSizing: "border-box", padding: "11px 14px", fontSize: 15.5, fontFamily: "'Jost', sans-serif", border: `1px solid ${C.line}`, borderRadius: 2, marginTop: 12, outline: "none", background: "#fff", color: C.ink }}
+            />
+            {zipServed && (
+              <p style={{ fontSize: 14, color: C.bottle, marginTop: 10 }}>
+                Your street is on our {routeDay} route — choose your first {routeDay}.
+              </p>
+            )}
+            {zipValid && !zipServed && (
+              <p style={{ fontSize: 14, color: "#8C3B33", marginTop: 10 }}>
+                We haven't opened your route yet — <a href="/tasting" style={{ color: "inherit" }}>join the waitlist</a> and you'll be first to know.
+              </p>
+            )}
 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 16 }}>
               <button aria-label="Previous month" disabled={!canGoBack} onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() - 1, 1))}
@@ -324,7 +406,7 @@ export default function WaterDeliverySite() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4, marginTop: 6 }}>
               {grid.map((d, i) => {
                 if (!d) return <div key={`e${i}`} />;
-                const disabled = d < minDate;
+                const disabled = d < minDate || !zipServed || d.getDay() !== DAY_INDEX[routeDay];
                 const isSel = selected && d.getTime() === selected.getTime();
                 return (
                   <button
@@ -337,7 +419,7 @@ export default function WaterDeliverySite() {
                       background: isSel ? C.bottle : "none",
                       color: disabled ? C.line : isSel ? "#fff" : C.ink,
                       cursor: disabled ? "default" : "pointer",
-                      textDecoration: disabled ? "line-through" : "none",
+                      textDecoration: d < minDate ? "line-through" : "none",
                       transition: "background .15s",
                     }}
                   >
@@ -365,7 +447,7 @@ export default function WaterDeliverySite() {
                 const res = await fetch("/api/checkout", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ qty, deliveryDate: selected.toISOString().slice(0, 10) }),
+                  body: JSON.stringify({ qty, deliveryDate: selected.toISOString().slice(0, 10), zip, routeDay }),
                 });
                 const data = await res.json();
                 if (!res.ok || !data.url) throw new Error(data.error || "Checkout could not be started.");
@@ -383,7 +465,7 @@ export default function WaterDeliverySite() {
               cursor: ready ? "pointer" : "default", transition: "background .2s",
             }}
           >
-            {busy ? "Opening secure checkout…" : ready ? `Continue to payment — ${fmt(total)}/month` : "Choose cases and a delivery date"}
+            {busy ? "Opening secure checkout…" : ready ? `Continue to payment — ${fmt(total)}/month` : "Choose cases, your zip, and a route day"}
           </button>
           {checkoutError && (
             <p style={{ fontSize: 13.5, color: "#8C3B33", marginTop: 12 }}>{checkoutError} Try again, or write matthew@growpalmbeach.com.</p>
