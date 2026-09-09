@@ -56,8 +56,8 @@ export const POST: APIRoute = async ({ request, url }) => {
       billing_address_collection: "required",
       shipping_address_collection: { allowed_countries: ["US"] },
       phone_number_collection: { enabled: true },
-      success_url: `${url.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${url.origin}/`,
+      success_url: `${site(request, url)}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${site(request, url)}/`,
     });
     return json({ url: session.url });
   } catch (err: any) {
@@ -71,4 +71,9 @@ function json(data: unknown, status = 200) {
     status,
     headers: { "Content-Type": "application/json" },
   });
+}
+
+function site(request: Request, url: URL) {
+  const host = request.headers.get("x-forwarded-host") ?? url.host;
+  return host.includes("localhost") ? "https://www.sorgentepb.com" : `https://${host}`;
 }
