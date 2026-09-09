@@ -34,7 +34,7 @@ export const POST: APIRoute = async ({ request }) => {
           unit_amount: 5000,
           product_data: {
             name: "The Tasting Case",
-            description: "evian 750ml · Acqua Panna 1L · S.Pellegrino sparkling · Saratoga 28oz & 12oz — credited in full toward your first month of delivery.",
+            description: "Six bottles — evian 750ml & 500ml · Acqua Panna 1L · S.Pellegrino sparkling · Saratoga 28oz & 12oz — credited in full toward your first month of delivery.",
           },
         },
       }],

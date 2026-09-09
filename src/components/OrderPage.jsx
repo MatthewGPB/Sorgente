@@ -195,6 +195,11 @@ export default function WaterDeliverySite() {
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
       <TastingPopup />
 
+      {/* Announcement bar */}
+      <a href="/tasting" style={{ display: "block", background: C.bottleDeep, color: "#fff", textDecoration: "none", textAlign: "center", padding: "11px 16px", fontSize: 13.5, letterSpacing: "0.05em" }}>
+        Begin with the Tasting Case — six bottles, $50, credited toward your first month&nbsp;&nbsp;→
+      </a>
+
       {/* Masthead */}
       <header style={{ padding: "26px 24px 0", maxWidth: 1080, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", rowGap: 8, columnGap: 16 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -203,7 +208,10 @@ export default function WaterDeliverySite() {
             Sorgente
           </span>
         </div>
-        <div style={{ fontSize: 13, color: C.sub, letterSpacing: "0.06em" }}>Palm Beach · Jupiter Island · Manalapan</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap" }}>
+          <a href="/tasting" style={{ fontSize: 13.5, color: C.bottle, textDecoration: "none", letterSpacing: "0.05em", borderBottom: `1px solid ${C.line}` }}>The Tasting Case</a>
+          <span style={{ fontSize: 13, color: C.sub, letterSpacing: "0.06em" }}>Palm Beach · Jupiter Island · Manalapan</span>
+        </div>
       </header>
 
       {/* Hero */}
@@ -475,6 +483,24 @@ export default function WaterDeliverySite() {
           <p style={{ fontSize: 12.5, color: C.sub, marginTop: 12 }}>
             Billed monthly via Stripe secure checkout. Pause for travel or cancel anytime with two days' notice.
           </p>
+        </div>
+      </section>
+
+      {/* Tasting bridge */}
+      <section style={{ maxWidth: 1080, margin: "0 auto", padding: "0 24px 90px" }}>
+        <div style={{ border: `1px solid ${C.line}`, padding: "40px 36px", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 24 }}>
+          <div style={{ maxWidth: 560 }}>
+            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 28, fontWeight: 500, color: C.bottleDeep }}>
+              Not ready for monthly? Begin with a tasting.
+            </div>
+            <p style={{ fontSize: 15, color: C.sub, lineHeight: 1.7, marginTop: 10, fontWeight: 300 }}>
+              Six bottles across all four waters, delivered on your street's route day.
+              $50 — credited in full toward your first month if you continue.
+            </p>
+          </div>
+          <a href="/tasting" style={{ background: C.bottle, color: "#fff", textDecoration: "none", borderRadius: 999, padding: "16px 34px", fontSize: 15, letterSpacing: "0.04em", whiteSpace: "nowrap" }}>
+            Check my route
+          </a>
         </div>
       </section>
 

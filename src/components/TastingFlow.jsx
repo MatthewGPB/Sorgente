@@ -45,6 +45,7 @@ export default function TastingFlow() {
 
   // Prefill from the popup handoff (?addr=)
   useEffect(() => {
+    try { window.fbq && window.fbq("track", "ViewContent", { content_name: "Tasting Case", value: 50, currency: "USD" }); } catch {}
     const a = new URLSearchParams(window.location.search).get("addr");
     if (a) {
       const m = a.match(/\b(3\d{4})\b/);
@@ -222,6 +223,7 @@ export default function TastingFlow() {
               <div>Acqua Panna — 1 L glass</div>
               <div>S.Pellegrino — 750 ml sparkling</div>
               <div>Saratoga — 28 oz &amp; 12 oz cobalt glass</div>
+              <div>evian — 500 ml, the traveler</div>
               <div style={{ borderTop: `1px solid ${C.line}`, marginTop: 12, paddingTop: 12, display: "flex", justifyContent: "space-between" }}>
                 <span style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: 20 }}>Delivered {dateLabel}</span>
                 <span style={{ fontWeight: 500, fontSize: 20 }}>$50</span>
