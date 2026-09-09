@@ -49,7 +49,8 @@ const btn = {
 
 export default function TastingFlow() {
   const [step, setStep] = useState(1); // 1 route, 1.5 waitlist-done, 2 confirm, 3 details, 4 pay
-  const [address, setAddress] = useState("");
+  const [street, setStreet] = useState("");
+  const [zip, setZip] = useState("");
   const [inZone, setInZone] = useState(null);
   const [routeDay, setRouteDay] = useState(null);
   const [firstDate, setFirstDate] = useState(null);
@@ -64,30 +65,31 @@ export default function TastingFlow() {
   useEffect(() => {
     const a = new URLSearchParams(window.location.search).get("addr");
     if (a) {
-      setAddress(a);
-      checkRoute(a);
+      const m = a.match(/\b(3\d{4})\b/);
+      const st = m ? a.replace(m[1], "").replace(/[,\s]+$/, "").trim() : a.trim();
+      setStreet(st);
+      if (m) setZip(m[1]);
+      checkRoute(st, m ? m[1] : "");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function checkRoute(addr) {
-    const a = (addr ?? address).trim();
-    if (a.length < 6) { setError("Enter your street address and zip."); return; }
-    const zipMatch = a.match(/\b3\d{4}\b/);
+  function checkRoute(st, zp) {
+    const a = (st ?? street).trim();
+    const z = (zp ?? zip).trim();
+    if (a.length < 4) { setError("Enter your street address — like 123 Ocean Blvd."); return; }
+    if (!/^\d{5}$/.test(z)) { setError("Enter your 5-digit zip code."); return; }
     setError(null);
-    log({ type: "route_check", address: a });
-    if (zipMatch && zipInZone(zipMatch[0])) {
-      const day = routeFor(zipMatch[0]);
+    log({ type: "route_check", address: `${a}, ${z}` });
+    if (zipInZone(z)) {
+      const day = routeFor(z);
       setRouteDay(day);
       setFirstDate(nextRouteDate(day));
       setInZone(true);
-      setStep(2);
-    } else if (zipMatch) {
-      setInZone(false);
-      setStep(2);
     } else {
-      setError("Include your 5-digit zip so we can find your route.");
+      setInZone(false);
     }
+    setStep(2);
   }
 
   async function pay() {
@@ -100,7 +102,7 @@ export default function TastingFlow() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          address, name, phone, gate,
+          address: `${street.trim()}, ${zip.trim()}`, name, phone, gate,
           routeDay, deliveryDate: firstDate.toISOString().slice(0, 10),
         }),
       });
@@ -137,16 +139,31 @@ export default function TastingFlow() {
               The Tasting Case — evian, Acqua Panna, S.Pellegrino, and Saratoga in glass, $50,
               credited in full toward your first month. Check whether your street is on a route.
             </p>
-            <div style={{ marginTop: 28 }}>
-              <input
-                style={input}
-                placeholder="Street address & zip — 123 Ocean Blvd, 33480"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && checkRoute()}
-                autoFocus
-              />
-              <button style={btn} onClick={() => checkRoute()}>Check my route</button>
+            <div style={{ marginTop: 30, display: "grid", gap: 18 }}>
+              <div>
+                <label style={{ display: "block", fontSize: 14, letterSpacing: "0.06em", color: C.bottle, marginBottom: 8 }}>STREET ADDRESS</label>
+                <input
+                  style={{ ...input, fontSize: 17.5, padding: "16px 18px" }}
+                  placeholder="123 Ocean Blvd"
+                  value={street}
+                  onChange={(e) => setStreet(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && checkRoute()}
+                  autoFocus
+                />
+              </div>
+              <div>
+                <label style={{ display: "block", fontSize: 14, letterSpacing: "0.06em", color: C.bottle, marginBottom: 8 }}>ZIP CODE</label>
+                <input
+                  style={{ ...input, fontSize: 17.5, padding: "16px 18px", maxWidth: 200 }}
+                  placeholder="33480"
+                  inputMode="numeric"
+                  maxLength={5}
+                  value={zip}
+                  onChange={(e) => setZip(e.target.value.replace(/\D/g, ""))}
+                  onKeyDown={(e) => e.key === "Enter" && checkRoute()}
+                />
+              </div>
+              <div><button style={btn} onClick={() => checkRoute()}>Check my route</button></div>
             </div>
           </section>
         )}
@@ -155,7 +172,7 @@ export default function TastingFlow() {
           <section>
             <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 15, color: C.sub, letterSpacing: "0.14em" }}>GOOD NEWS</div>
             <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500, fontSize: "clamp(30px, 4.6vw, 42px)", lineHeight: 1.15, color: C.bottleDeep, marginTop: 10 }}>
-              {streetName(address)} is on our {routeDay} route.
+              {streetName(street)} is on our {routeDay} route.
             </h1>
             <p style={{ color: C.sub, fontSize: 16.5, lineHeight: 1.7, marginTop: 16, fontWeight: 300 }}>
               Your Tasting Case can arrive as soon as <span style={{ color: C.bottle }}>{dateLabel}</span>.
@@ -176,7 +193,7 @@ export default function TastingFlow() {
               <input style={input} placeholder="Mobile number" value={wlPhone} inputMode="tel"
                 onChange={(e) => setWlPhone(e.target.value)} />
               <button style={btn} onClick={() => {
-                log({ type: "waitlist", address, phone: wlPhone });
+                log({ type: "waitlist", address: `${street.trim()}, ${zip.trim()}`, phone: wlPhone });
                 setStep(1.5);
               }}>Keep me posted</button>
             </div>
