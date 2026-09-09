@@ -141,8 +141,11 @@ export default function WaterDeliverySite() {
 
       {/* Masthead */}
       <header style={{ padding: "26px 24px 0", maxWidth: 1080, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-        <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 26, fontWeight: 600, letterSpacing: "0.02em", color: C.bottle }}>
-          Sorgente
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <img src="/logo.png" alt="" style={{ height: 34, width: 34 }} />
+          <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 26, fontWeight: 600, letterSpacing: "0.02em", color: C.bottle }}>
+            Sorgente
+          </span>
         </div>
         <div style={{ fontSize: 13, color: C.sub, letterSpacing: "0.06em" }}>Palm Beach · Jupiter Island · Manalapan</div>
       </header>
@@ -157,6 +160,23 @@ export default function WaterDeliverySite() {
           delivered on your schedule. We carry it in, put it away, and take the empty glass with us.
           One monthly delivery, paused whenever you travel.
         </p>
+        <img src="/collection.jpg" alt="The Sorgente collection: evian, Acqua Panna, S.Pellegrino, and Saratoga in glass"
+          style={{ width: "100%", borderRadius: 2, marginTop: 48, display: "block", boxShadow: "0 24px 60px rgba(20,43,36,0.12)" }} />
+
+        {/* How it works */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 32, marginTop: 56 }}>
+          {[
+            ["01", "Compose your delivery", "Choose your cases below — still, sparkling, glass for the table, small bottles for the fridge."],
+            ["02", "We stock your home", "Your delivery arrives on your day. We carry it in, put it away, and take the empty glass."],
+            ["03", "It simply repeats", "Same order, same day, every month. Traveling? One text pauses it until you're back."],
+          ].map(([n, t, d]) => (
+            <div key={n}>
+              <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 15, color: C.sub, letterSpacing: "0.14em" }}>{n}</div>
+              <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 21, fontWeight: 600, color: C.bottle, marginTop: 6 }}>{t}</div>
+              <p style={{ fontSize: 14.5, lineHeight: 1.65, color: C.sub, marginTop: 8, fontWeight: 300 }}>{d}</p>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* Order builder */}
@@ -412,7 +432,7 @@ export default function WaterDeliverySite() {
 
       <footer style={{ borderTop: `1px solid ${C.line}`, padding: "26px 24px", maxWidth: 1080, margin: "0 auto", display: "flex", justifyContent: "space-between", fontSize: 13, color: C.sub }}>
         <span>Sorgente — private water delivery</span>
-        <span>hello@sorgentepb.com</span>
+        <span><a href="/policies" style={{ color: "inherit", textDecoration: "none" }}>Policies</a> · hello@sorgentepb.com</span>
       </footer>
     </div>
   );
