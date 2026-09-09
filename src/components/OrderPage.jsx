@@ -18,63 +18,63 @@ const FOUNDER_PHOTO = "/founder.jpg";
 const SKUS = [
   {
     id: "evian750",
+    img: "/products/evian750.jpg",
     brand: "evian",
     name: "Natural Spring Water",
     detail: "750 ml \u00b7 12 bottles",
     origin: "French Alps",
     note: "The table bottle",
     material: "Glass",
-    bottle: { shape: "evianGlass" },
   },
   {
     id: "panna1l",
+    img: "/products/panna1l.jpg",
     brand: "Acqua Panna",
     name: "Toscana Still Water",
     detail: "1 L \u00b7 12 bottles",
     origin: "Tuscany, Italy",
     note: "The kitchen staple",
     material: "Glass",
-    bottle: { shape: "panna" },
   },
   {
     id: "pellegrino750",
+    img: "/products/pellegrino750.jpg",
     brand: "S.Pellegrino",
     name: "Sparkling Mineral Water",
     detail: "750 ml \u00b7 12 bottles",
     origin: "San Pellegrino Terme, Italy",
     note: "The table sparkling",
     material: "Glass",
-    bottle: { shape: "pellegrino" },
   },
   {
     id: "saratoga28",
+    img: "/products/saratoga28.jpg",
     brand: "Saratoga",
     name: "Still Spring Water",
     detail: "28 oz \u00b7 12 bottles",
     origin: "Saratoga Springs, NY",
     note: "The statement bottle",
     material: "Glass",
-    bottle: { shape: "saratoga", scale: 1 },
   },
   {
     id: "saratoga12",
+    img: "/products/saratoga12.jpg",
     brand: "Saratoga",
     name: "Spring Water",
     detail: "12 oz \u00b7 24 bottles",
     origin: "Saratoga Springs, NY",
     note: "The cocktail-hour pour",
     material: "Glass",
-    bottle: { shape: "saratoga", scale: 0.68 },
   },
   {
     id: "evian500",
+    img: "/products/evian500.jpg",
     brand: "evian",
     name: "Natural Spring Water",
     detail: "500 ml \u00b7 24 bottles",
     origin: "French Alps",
     note: "Fridge, car & gym",
     material: "Plastic",
-    bottle: { shape: "plastic" },
   },
 ];
 
@@ -164,7 +164,8 @@ export default function WaterDeliverySite() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 1, background: C.line, border: `1px solid ${C.line}` }}>
           {SKUS.map((s) => (
             <div key={s.id} style={{ background: qty[s.id] > 0 ? C.mist : "#fff", padding: "26px 24px", transition: "background .25s", display: "flex", flexDirection: "column" }}>
-              <Bottle spec={s.bottle} />
+              <img src={s.img} alt={`${s.brand} ${s.detail}`} loading="lazy"
+                style={{ width: "100%", height: 210, objectFit: "cover", objectPosition: "center 62%", borderRadius: 2, display: "block" }} />
               <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginTop: 16 }}>
                 <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 26, fontWeight: 600, color: C.bottle }}>{s.brand}</div>
                 <span style={{
@@ -414,98 +415,6 @@ export default function WaterDeliverySite() {
         <span>hello@sorgentepb.com</span>
       </footer>
     </div>
-  );
-}
-
-function Bottle({ spec }) {
-  const s = spec.scale || 1;
-  // All shapes drawn in a 0 0 80 140 viewBox, ground line y=130
-  if (spec.shape === "evianGlass") {
-    // evian glass: slender straight cylinder, quick shoulder, short neck, pink cap
-    return (
-      <svg viewBox="0 0 80 140" style={{ height: 120, display: "block", margin: "0 auto" }} aria-hidden="true">
-        <ellipse cx="40" cy="132" rx="15" ry="3.5" fill="rgba(22,33,29,0.08)" />
-        <path d="M 28 52 L 28 126 Q 28 130 32 130 L 48 130 Q 52 130 52 126 L 52 52
-                 Q 52 44 45 41 L 45 34 L 35 34 L 35 41 Q 28 44 28 52 Z"
-          fill="#F5EDEC" stroke="rgba(22,33,29,0.16)" strokeWidth="1" />
-        <rect x="34" y="26" width="12" height="9" rx="1.5" fill="#E7A9B4" />
-        <line x1="28" y1="112" x2="52" y2="112" stroke="#E7A9B4" strokeWidth="2" opacity="0.8" />
-        <path d="M 32 56 L 32 120" stroke="rgba(255,255,255,0.7)" strokeWidth="2.5" strokeLinecap="round" />
-        <path d="M 30 96 L 36 88 L 41 94 L 47 85 L 50 90" stroke="rgba(199,214,209,0.9)" strokeWidth="1.4" fill="none" />
-      </svg>
-    );
-  }
-  if (spec.shape === "panna") {
-    // Acqua Panna: soft sloped shoulders, longer neck, cream oval crest label, deep green cap
-    return (
-      <svg viewBox="0 0 80 140" style={{ height: 120, display: "block", margin: "0 auto" }} aria-hidden="true">
-        <ellipse cx="40" cy="132" rx="16" ry="3.5" fill="rgba(22,33,29,0.08)" />
-        <path d="M 26 66 L 26 125 Q 26 130 31 130 L 49 130 Q 54 130 54 125 L 54 66
-                 C 54 52 47 48 45 44 L 45 24 L 35 24 L 35 44 C 33 48 26 52 26 66 Z"
-          fill="#EDF2EC" stroke="rgba(22,33,29,0.16)" strokeWidth="1" />
-        <rect x="33.5" y="16" width="13" height="12" rx="1.5" fill="#1E3D33" />
-        <rect x="34.5" y="28" width="11" height="14" fill="rgba(30,61,51,0.14)" />
-        <ellipse cx="40" cy="96" rx="11.5" ry="15" fill="#F6F2E3" stroke="#1E3D33" strokeWidth="1.4" />
-        <text x="40" y="94" textAnchor="middle" fontFamily="Cormorant Garamond, serif" fontSize="8.5" fill="#1E3D33" fontStyle="italic">Acqua</text>
-        <text x="40" y="103" textAnchor="middle" fontFamily="Cormorant Garamond, serif" fontSize="8.5" fill="#1E3D33" fontStyle="italic">Panna</text>
-        <path d="M 30 68 L 30 122" stroke="rgba(255,255,255,0.75)" strokeWidth="2.5" strokeLinecap="round" />
-      </svg>
-    );
-  }
-  if (spec.shape === "pellegrino") {
-    // S.Pellegrino: emerald green glass, rounded shoulders, foil neck, red star on cream label
-    return (
-      <svg viewBox="0 0 80 140" style={{ height: 120, display: "block", margin: "0 auto" }} aria-hidden="true">
-        <ellipse cx="40" cy="132" rx="16" ry="3.5" fill="rgba(22,33,29,0.08)" />
-        <path d="M 25 72 L 25 125 Q 25 130 30 130 L 50 130 Q 55 130 55 125 L 55 72
-                 C 55 58 48 54 46 50 L 46 30 L 34 30 L 34 50 C 32 54 25 58 25 72 Z"
-          fill="#2E5B45" stroke="rgba(22,33,29,0.2)" strokeWidth="1" />
-        <path d="M 34 30 L 34 52 C 32 55 27 59 26 66 L 54 66 C 53 59 48 55 46 52 L 46 30 Z"
-          fill="#3C6B52" />
-        <rect x="33" y="24" width="14" height="8" rx="1.5" fill="#3C6B52" />
-        <rect x="27" y="86" width="26" height="22" rx="2" fill="#F6F2E3" />
-        <path d="M 40 89 L 42 95 L 48 95 L 43.5 98.5 L 45.5 104 L 40 100.5 L 34.5 104 L 36.5 98.5 L 32 95 L 38 95 Z"
-          fill="#B5352C" />
-        <path d="M 29 74 L 29 122" stroke="rgba(255,255,255,0.28)" strokeWidth="2.5" strokeLinecap="round" />
-        <circle cx="47" cy="44" r="1" fill="rgba(255,255,255,0.5)" />
-        <circle cx="44" cy="38" r="0.8" fill="rgba(255,255,255,0.45)" />
-        <circle cx="48" cy="35" r="0.7" fill="rgba(255,255,255,0.4)" />
-      </svg>
-    );
-  }
-  if (spec.shape === "saratoga") {
-    // Saratoga: cobalt blue, broad rounded shoulders, short neck, small cream oval label
-    const top = 130 - 92 * s;
-    const halfW = 15 * (0.85 + 0.15 * s);
-    const shoulder = top + 22 * s;
-    return (
-      <svg viewBox="0 0 80 140" style={{ height: 120, display: "block", margin: "0 auto" }} aria-hidden="true">
-        <ellipse cx="40" cy="132" rx={halfW + 1} ry="3.5" fill="rgba(22,33,29,0.08)" />
-        <path d={`M ${40 - halfW} ${shoulder} L ${40 - halfW} 125 Q ${40 - halfW} 130 ${40 - halfW + 5} 130
-                  L ${40 + halfW - 5} 130 Q ${40 + halfW} 130 ${40 + halfW} 125 L ${40 + halfW} ${shoulder}
-                  C ${40 + halfW} ${top + 6 * s} ${40 + 6} ${top + 4 * s} ${40 + 6} ${top}
-                  L ${40 - 6} ${top}
-                  C ${40 - 6} ${top + 4 * s} ${40 - halfW} ${top + 6 * s} ${40 - halfW} ${shoulder} Z`}
-          fill="#1B3C7A" stroke="rgba(18,38,78,0.5)" strokeWidth="1" />
-        <rect x="33" y={top - 8} width="14" height="9" rx="1.5" fill="#12264E" />
-        <ellipse cx="40" cy={shoulder + (128 - shoulder) * 0.42} rx="9" ry={11 * (0.8 + 0.2 * s)} fill="#F6F2E3" opacity="0.95" />
-        <path d={`M ${40 - halfW + 4} ${shoulder + 4} L ${40 - halfW + 4} 122`} stroke="rgba(255,255,255,0.32)" strokeWidth="2.5" strokeLinecap="round" />
-      </svg>
-    );
-  }
-  // plastic: evian 500ml PET — slim, gentle waist, pink label band, flat cap
-  return (
-    <svg viewBox="0 0 80 140" style={{ height: 120, display: "block", margin: "0 auto" }} aria-hidden="true">
-      <ellipse cx="40" cy="132" rx="11" ry="3" fill="rgba(22,33,29,0.07)" />
-      <path d="M 31 78 C 31 72 33 70 33 66 L 33 60 L 47 60 L 47 66 C 47 70 49 72 49 78
-               L 49 92 C 49 96 47.5 97 47.5 101 C 47.5 105 49 106 49 110 L 49 126 Q 49 130 45 130
-               L 35 130 Q 31 130 31 126 L 31 110 C 31 106 32.5 105 32.5 101 C 32.5 97 31 96 31 92 Z"
-        fill="#E3EEF2" stroke="rgba(22,33,29,0.14)" strokeWidth="1" />
-      <rect x="34.5" y="54" width="11" height="7" rx="1.5" fill="#EDF3F1" stroke="rgba(22,33,29,0.18)" strokeWidth="0.8" />
-      <rect x="31.5" y="82" width="17" height="12" fill="#F0C6CE" opacity="0.9" />
-      <path d="M 34 84 L 37 80 L 40 83 L 43 78 L 46 82" stroke="#FFFFFF" strokeWidth="1.2" fill="none" />
-      <path d="M 34 100 L 34 124" stroke="rgba(255,255,255,0.8)" strokeWidth="2" strokeLinecap="round" />
-    </svg>
   );
 }
 
