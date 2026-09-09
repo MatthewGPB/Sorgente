@@ -151,20 +151,29 @@ export default function WaterDeliverySite() {
       </header>
 
       {/* Hero */}
-      <section style={{ maxWidth: 1080, margin: "0 auto", padding: "72px 24px 56px" }}>
-        <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500, fontSize: "clamp(38px, 5.5vw, 64px)", lineHeight: 1.08, maxWidth: 640, margin: 0, color: C.bottleDeep }}>
-          Fine water, in glass, stocked in your home every month.
-        </h1>
-        <p style={{ fontSize: 17, lineHeight: 1.7, color: C.sub, maxWidth: 520, marginTop: 22, fontWeight: 300 }}>
-          Still and sparkling — evian, Acqua Panna, S.Pellegrino, and Saratoga by the case,
-          delivered on your schedule. We carry it in, put it away, and take the empty glass with us.
-          One monthly delivery, paused whenever you travel.
-        </p>
-        <img src="/collection.jpg" alt="The Sorgente collection: evian, Acqua Panna, S.Pellegrino, and Saratoga in glass"
-          style={{ width: "100%", borderRadius: 2, marginTop: 48, display: "block", boxShadow: "0 24px 60px rgba(20,43,36,0.12)" }} />
+      <section style={{ maxWidth: 1080, margin: "0 auto", padding: "56px 24px 56px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 52, alignItems: "center" }}>
+          <div>
+            <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500, fontSize: "clamp(34px, 4.4vw, 54px)", lineHeight: 1.1, margin: 0, color: C.bottleDeep }}>
+              Fine water, in glass, stocked in your home every month.
+            </h1>
+            <p style={{ fontSize: 16.5, lineHeight: 1.7, color: C.sub, marginTop: 20, fontWeight: 300 }}>
+              Still and sparkling — evian, Acqua Panna, S.Pellegrino, and Saratoga by the case,
+              delivered on your schedule. We carry it in, put it away, and take the empty glass with us.
+              One monthly delivery, paused whenever you travel.
+            </p>
+            <p style={{ fontSize: 15, marginTop: 22 }}>
+              <a href="sms:+15614010695" style={{ color: C.bottle, textDecoration: "none", borderBottom: `1px solid ${C.line}` }}>
+                Text us anytime — (561) 401-0695
+              </a>
+            </p>
+          </div>
+          <img src="/collection.jpg" alt="The Sorgente collection: evian, Acqua Panna, S.Pellegrino, and Saratoga in glass"
+            style={{ width: "100%", borderRadius: 2, display: "block", boxShadow: "0 24px 60px rgba(20,43,36,0.12)" }} />
+        </div>
 
         {/* How it works */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 32, marginTop: 56 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 32, marginTop: 64 }}>
           {[
             ["01", "Compose your delivery", "Choose your cases below — still, sparkling, glass for the table, small bottles for the fridge."],
             ["02", "We stock your home", "Your delivery arrives on your day. We carry it in, put it away, and take the empty glass."],
@@ -432,7 +441,7 @@ export default function WaterDeliverySite() {
 
       <footer style={{ borderTop: `1px solid ${C.line}`, padding: "26px 24px", maxWidth: 1080, margin: "0 auto", display: "flex", justifyContent: "space-between", fontSize: 13, color: C.sub }}>
         <span>Sorgente — private water delivery</span>
-        <span><a href="/policies" style={{ color: "inherit", textDecoration: "none" }}>Policies</a> · hello@sorgentepb.com</span>
+        <span><a href="sms:+15614010695" style={{ color: "inherit", textDecoration: "none" }}>(561) 401-0695</a> · <a href="/policies" style={{ color: "inherit", textDecoration: "none" }}>Policies</a> · hello@sorgentepb.com</span>
       </footer>
     </div>
   );
