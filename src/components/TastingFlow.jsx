@@ -46,15 +46,59 @@ const btn = {
 };
 const serif = { fontFamily: "'Cormorant Garamond', serif" };
 
-function RouteCheck({ street, zip, setStreet, setZip, onCheck, error, autoFocus }) {
+const PLACES_KEY = import.meta.env.PUBLIC_GOOGLE_PLACES_KEY;
+let placesLoading = null;
+function loadPlaces() {
+  if (!PLACES_KEY) return Promise.reject();
+  if (window.google?.maps?.places) return Promise.resolve();
+  if (!placesLoading) {
+    placesLoading = new Promise((resolve, reject) => {
+      const sc = document.createElement("script");
+      sc.src = `https://maps.googleapis.com/maps/api/js?key=${PLACES_KEY}&libraries=places&loading=async`;
+      sc.async = true;
+      sc.onload = () => resolve();
+      sc.onerror = reject;
+      document.head.appendChild(sc);
+    });
+  }
+  return placesLoading;
+}
+
+function RouteCheck({ street, zip, setStreet, setZip, onCheck, error, autoFocus, inputId }) {
+  useEffect(() => {
+    if (!PLACES_KEY) return;
+    let ac;
+    loadPlaces().then(() => {
+      const el = document.getElementById(inputId);
+      if (!el || !window.google?.maps?.places) return;
+      ac = new window.google.maps.places.Autocomplete(el, {
+        types: ["address"],
+        componentRestrictions: { country: "us" },
+        fields: ["address_components"],
+      });
+      ac.addListener("place_changed", () => {
+        const comps = ac.getPlace()?.address_components ?? [];
+        const get = (t) => comps.find((c) => c.types.includes(t))?.long_name ?? "";
+        const num = get("street_number");
+        const route = get("route");
+        const z = comps.find((c) => c.types.includes("postal_code"))?.long_name ?? "";
+        if (route) setStreet(`${num} ${route}`.trim());
+        if (z) setZip(z.slice(0, 5));
+      });
+    }).catch(() => {});
+    return () => { if (ac) window.google?.maps?.event?.clearInstanceListeners(ac); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputId]);
   return (
     <div>
       <div style={{ display: "grid", gap: 12 }}>
         <input style={input} placeholder="Street address — 123 Ocean Blvd" value={street}
+          id={inputId} name="street-address" autoComplete="street-address"
           autoFocus={autoFocus} onChange={(e) => setStreet(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && onCheck()} />
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
           <input style={{ ...input, width: 150 }} placeholder="Zip" inputMode="numeric" maxLength={5}
+            name="postal-code" autoComplete="postal-code"
             value={zip} onChange={(e) => setZip(e.target.value.replace(/\D/g, ""))}
             onKeyDown={(e) => e.key === "Enter" && onCheck()} />
           <button style={btn} onClick={onCheck}>Check my route</button>
@@ -173,7 +217,7 @@ export default function TastingFlow() {
                   toward your first month, so if you continue, the tasting was free.
                 </p>
                 <div style={{ marginTop: 26 }}>
-                  <RouteCheck {...checkProps} autoFocus={false} />
+                  <RouteCheck {...checkProps} inputId="route-street-hero" autoFocus={false} />
                 </div>
               </div>
               <img src="/collection.jpg" alt="The six bottles of the Sorgente Tasting Case"
@@ -258,7 +302,7 @@ export default function TastingFlow() {
               See when your street's route runs.
             </div>
             <div style={{ marginTop: 24 }}>
-              <RouteCheck {...checkProps} autoFocus={false} />
+              <RouteCheck {...checkProps} inputId="route-street-footer" autoFocus={false} />
             </div>
           </section>
         </main>
@@ -313,9 +357,9 @@ export default function TastingFlow() {
                 A few details for {routeDay}.
               </h1>
               <div style={{ display: "grid", gap: 14, marginTop: 26 }}>
-                <input style={input} placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
+                <input style={input} placeholder="Name" name="name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} />
                 <div>
-                  <input style={input} placeholder="Mobile" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                  <input style={input} placeholder="Mobile" name="tel" autoComplete="tel" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
                   <div style={{ fontSize: 13, color: C.sub, marginTop: 6 }}>We text delivery updates — nothing else.</div>
                 </div>
                 <textarea style={{ ...input, minHeight: 80, resize: "vertical" }}

@@ -384,6 +384,8 @@ export default function WaterDeliverySite() {
               value={zip}
               onChange={(e) => setZip(e.target.value.replace(/\D/g, "").slice(0, 5))}
               placeholder="Zip code — 33480"
+              name="postal-code"
+              autoComplete="postal-code"
               inputMode="numeric"
               style={{ width: 160, boxSizing: "border-box", padding: "11px 14px", fontSize: 15.5, fontFamily: "'Jost', sans-serif", border: `1px solid ${C.line}`, borderRadius: 2, marginTop: 12, outline: "none", background: "#fff", color: C.ink }}
             />
