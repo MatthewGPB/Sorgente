@@ -22,3 +22,13 @@ export function nextRouteDate(dayName, from = Date.now()) {
   while (d.getDay() !== DAY_INDEX[dayName]) d.setDate(d.getDate() + 1);
   return d;
 }
+
+// Route capacity — honest scarcity. Update ROUTE_TAKEN as accounts sign.
+export const ROUTE_CAP = 20;
+export const ROUTE_TAKEN = { Tuesday: 0, Thursday: 0, Saturday: 0 };
+
+export function routeStatus(day) {
+  const taken = ROUTE_TAKEN[day] ?? 0;
+  if (taken <= 0) return `capped at ${ROUTE_CAP} homes — founding spots open`;
+  return `${taken} of ${ROUTE_CAP} homes taken`;
+}

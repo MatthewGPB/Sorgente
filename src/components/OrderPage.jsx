@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { zipInZone, routeFor, DAY_INDEX } from "../lib/routes.js";
+import { zipInZone, routeFor, DAY_INDEX, routeStatus } from "../lib/routes.js";
 
 // ————— Design tokens —————
 // Palette: glass green + cool water tints, luxury coastal
@@ -152,6 +152,7 @@ export default function WaterDeliverySite() {
   const [viewMonth, setViewMonth] = useState(new Date(minDate.getFullYear(), minDate.getMonth(), 1));
   const [selected, setSelected] = useState(null);
   const [zip, setZip] = useState("");
+  const [tasting50, setTasting50] = useState(false);
   const [busy, setBusy] = useState(false);
   const [checkoutError, setCheckoutError] = useState(null);
 
@@ -166,6 +167,26 @@ export default function WaterDeliverySite() {
   const ready = totalCases >= MIN_CASES && selected && zipServed;
 
   useEffect(() => { setSelected(null); }, [routeDay]);
+
+  // Pre-filled conversion links: /?case=panna1l:5,saratoga28:5&zip=33480&tasting50=1#order
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search);
+    const caseParam = sp.get("case");
+    if (caseParam) {
+      const next = Object.fromEntries(SKUS.map((s) => [s.id, 0]));
+      for (const part of caseParam.split(",")) {
+        const [id, n] = part.split(":");
+        if (id in next) next[id] = Math.max(0, Math.min(99, parseInt(n, 10) || 0));
+      }
+      setQty(next);
+    }
+    const z = sp.get("zip");
+    if (z && /^\d{5}$/.test(z)) setZip(z);
+    if (sp.get("tasting50") === "1") setTasting50(true);
+    if (caseParam || window.location.hash === "#order") {
+      setTimeout(() => document.getElementById("order")?.scrollIntoView({ behavior: "smooth" }), 300);
+    }
+  }, []);
 
   const change = (id, delta) =>
     setQty((q) => ({ ...q, [id]: Math.max(0, q[id] + delta) }));
@@ -193,6 +214,7 @@ export default function WaterDeliverySite() {
   return (
     <div style={{ minHeight: "100vh", background: C.paper, color: C.ink, fontFamily: "'Jost', sans-serif" }}>
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+      <style>{`@media (max-width: 719px) { .hero-img-first { order: -1; } }`}</style>
       <TastingPopup />
 
       {/* Announcement bar */}
@@ -237,7 +259,7 @@ export default function WaterDeliverySite() {
               </a>
             </p>
           </div>
-          <img src="/collection.jpg" alt="The Sorgente collection: evian, Acqua Panna, S.Pellegrino, and Saratoga in glass"
+          <img src="/collection.jpg" alt="The Sorgente collection: evian, Acqua Panna, S.Pellegrino, and Saratoga in glass" className="hero-img-first"
             style={{ width: "100%", borderRadius: 2, display: "block", boxShadow: "0 24px 60px rgba(20,43,36,0.12)" }} />
         </div>
 
@@ -360,6 +382,7 @@ export default function WaterDeliverySite() {
               <Row label="Cases" value={totalCases === 0 ? "—" : `${totalCases}`} />
               <Row label="Per case" value={totalCases === 0 ? "—" : fmt(perCase)} />
               {savings > 0 && <Row label="Estate rate (10+ cases)" value={`− ${fmt(savings)}`} accent />}
+              {tasting50 && totalCases > 0 && <Row label="Tasting Case credit (first month)" value="− $50" accent />}
               <div style={{ borderTop: `1px solid ${C.line}`, marginTop: 10, paddingTop: 12, display: "flex", justifyContent: "space-between", fontSize: 22 }}>
                 <span style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}>Monthly total</span>
                 <span style={{ fontWeight: 500 }}>{totalCases === 0 ? "—" : fmt(total)}</span>
@@ -397,7 +420,7 @@ export default function WaterDeliverySite() {
             </div>
             {zipServed && (
               <p style={{ fontSize: 14, color: C.bottle, marginTop: 12 }}>
-                <span style={{ fontSize: 13, letterSpacing: "0.1em", fontWeight: 500 }}>STEP 2</span> — Your street is on our {routeDay} route. Choose your first {routeDay}.
+                <span style={{ fontSize: 13, letterSpacing: "0.1em", fontWeight: 500 }}>STEP 2</span> — Your street is on our {routeDay} route ({routeStatus(routeDay)}). Choose your first {routeDay}.
               </p>
             )}
             {zipValid && !zipServed && (
@@ -474,7 +497,7 @@ export default function WaterDeliverySite() {
                 const res = await fetch("/api/checkout", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ qty, deliveryDate: selected.toISOString().slice(0, 10), zip, routeDay }),
+                  body: JSON.stringify({ qty, deliveryDate: selected.toISOString().slice(0, 10), zip, routeDay, tasting50 }),
                 });
                 const data = await res.json();
                 if (!res.ok || !data.url) throw new Error(data.error || "Checkout could not be started.");

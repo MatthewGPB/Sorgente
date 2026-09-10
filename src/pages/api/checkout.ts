@@ -49,14 +49,31 @@ export const POST: APIRoute = async ({ request, url }) => {
     return json({ error: `Choose an upcoming ${routeDay} — that's your street's route day.` }, 400);
   }
 
+  // Tasting conversion: $50-off-once credit via pre-filled link (?tasting50=1).
+  // Stripe Checkout allows one coupon: the credit wins; if the order is ALSO
+  // estate-size, metadata flags it so the 10% forever coupon gets added to the
+  // subscription in the dashboard afterward.
+  const tasting50 = body.tasting50 === true;
+  let discounts: { coupon: string }[] = [];
+  if (tasting50) {
+    const CREDIT_ID = "TASTING50";
+    try { await stripe.coupons.retrieve(CREDIT_ID); }
+    catch {
+      await stripe.coupons.create({ id: CREDIT_ID, name: "Tasting Case credit", amount_off: 5000, currency: "usd", duration: "once" });
+    }
+    discounts = [{ coupon: CREDIT_ID }];
+  } else if (totalCases >= ESTATE_AT) {
+    discounts = [{ coupon: priceMap.coupon }];
+  }
+  const estatePending = tasting50 && totalCases >= ESTATE_AT ? "1" : "0";
+
   try {
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       line_items,
-      // Estate rate: 10% off (= $45/case) when the combined order is 10+ cases
-      ...(totalCases >= ESTATE_AT ? { discounts: [{ coupon: priceMap.coupon }] } : {}),
+      ...(discounts.length ? { discounts } : {}),
       subscription_data: {
-        metadata: { first_delivery_date: deliveryDate, total_cases: String(totalCases), zip, route_day: routeDay },
+        metadata: { first_delivery_date: deliveryDate, total_cases: String(totalCases), zip, route_day: routeDay, tasting_credit: tasting50 ? "1" : "0", estate_rate_pending: estatePending },
       },
       metadata: { first_delivery_date: deliveryDate, zip, route_day: routeDay },
       billing_address_collection: "required",

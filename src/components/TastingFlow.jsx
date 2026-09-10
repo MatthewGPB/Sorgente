@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { zipInZone, routeFor, nextRouteDate } from "../lib/routes.js";
+import { zipInZone, routeFor, nextRouteDate, routeStatus, ROUTE_CAP } from "../lib/routes.js";
 
 const C = {
   ink: "#16211D", bottle: "#1E3D33", bottleDeep: "#142B24",
@@ -106,7 +106,7 @@ function RouteCheck({ street, zip, setStreet, setZip, onCheck, error, autoFocus,
       </div>
       {error && <p style={{ color: "#8C3B33", fontSize: 14.5, marginTop: 12 }}>{error}</p>}
       <p style={{ fontSize: 13, color: C.sub, marginTop: 12 }}>
-        We serve a limited number of homes per route — your street decides your delivery day.
+        Every route is capped at {ROUTE_CAP} homes — your street decides your delivery day.
       </p>
     </div>
   );
@@ -193,6 +193,7 @@ export default function TastingFlow() {
   return (
     <div ref={topRef} style={{ minHeight: "100vh", background: C.paper, color: C.ink, fontFamily: "'Jost', sans-serif" }}>
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+      <style>{`@media (max-width: 719px) { .hero-img-first { order: -1; } }`}</style>
 
       <header style={{ padding: "26px 24px 0", maxWidth: 1080, margin: "0 auto" }}>
         <a href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
@@ -226,7 +227,7 @@ export default function TastingFlow() {
                   </p>
                 </div>
               </div>
-              <img src="/collection.jpg" alt="The six bottles of the Sorgente Tasting Case"
+              <img src="/collection.jpg" alt="The six bottles of the Sorgente Tasting Case" className="hero-img-first"
                 style={{ width: "100%", borderRadius: 2, display: "block", boxShadow: "0 24px 60px rgba(20,43,36,0.12)" }} />
             </div>
           </section>
@@ -278,8 +279,15 @@ export default function TastingFlow() {
                 </div>
               ))}
             </div>
-            <p style={{ fontSize: 14.5, color: C.sub, marginTop: 20, fontWeight: 300 }}>
-              Keep it a one-time case if you like — no obligation, no follow-up beyond one text.
+            <div style={{ borderLeft: `2px solid ${C.bottle}`, paddingLeft: 18, marginTop: 26 }}>
+              <p style={{ fontSize: 15.5, color: C.ink, lineHeight: 1.7, fontWeight: 300, margin: 0 }}>
+                My guarantee: if it's not the best water you've ever had at home, text me and
+                I'll refund the $50 — and you keep the bottles.
+              </p>
+              <p style={{ fontSize: 13.5, color: C.sub, marginTop: 8 }}>— Matthew, founder</p>
+            </div>
+            <p style={{ fontSize: 14.5, color: C.sub, marginTop: 18, fontWeight: 300 }}>
+              And keep it a one-time case if you like — no obligation, no follow-up beyond one text.
             </p>
           </section>
 
@@ -339,6 +347,11 @@ export default function TastingFlow() {
             <div style={{ marginTop: 24 }}>
               <RouteCheck {...checkProps} inputId="route-street-footer" autoFocus={false} />
             </div>
+            <p style={{ fontSize: 14, marginTop: 22 }}>
+              <a href="sms:+15614010695" style={{ color: C.bottle, textDecoration: "none", borderBottom: `1px solid ${C.line}` }}>
+                Or just text Matthew — (561) 401-0695
+              </a>
+            </p>
           </section>
         </main>
       )}
@@ -353,6 +366,9 @@ export default function TastingFlow() {
               </h1>
               <p style={{ color: C.sub, fontSize: 16.5, lineHeight: 1.7, marginTop: 16, fontWeight: 300 }}>
                 Your Tasting Case can arrive as soon as <span style={{ color: C.bottle }}>{dateLabel}</span> — chilled, carried in, six waters. If you continue monthly, this becomes your standing delivery day.
+              </p>
+              <p style={{ fontSize: 14, color: C.bottle, marginTop: 12 }}>
+                {routeDay} route: {routeStatus(routeDay)}.
               </p>
               <button style={{ ...btn, marginTop: 22 }} onClick={() => setStep(3)}>Reserve my Tasting Case</button>
             </section>
@@ -429,6 +445,15 @@ export default function TastingFlow() {
               <button style={{ ...btn, marginTop: 20, opacity: busy ? 0.7 : 1 }} disabled={busy} onClick={pay}>
                 {busy ? "Opening secure checkout…" : "Reserve for $50"}
               </button>
+              <p style={{ fontSize: 13.5, color: C.sub, marginTop: 14, lineHeight: 1.6 }}>
+                Founder's guarantee: not the best water you've had at home? Text me, keep the
+                bottles, get your $50 back.
+              </p>
+              <p style={{ fontSize: 13.5, marginTop: 10 }}>
+                <a href="sms:+15614010695" style={{ color: C.bottle, textDecoration: "none", borderBottom: `1px solid ${C.line}` }}>
+                  Questions first? Text Matthew directly — (561) 401-0695
+                </a>
+              </p>
             </section>
           )}
 
