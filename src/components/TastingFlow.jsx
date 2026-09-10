@@ -1,10 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { zipInZone, routeFor, nextRouteDate } from "../lib/routes.js";
 
 const C = {
   ink: "#16211D", bottle: "#1E3D33", bottleDeep: "#142B24",
   mist: "#EDF3F1", paper: "#FBFCFB", line: "#C9D6D1", sub: "#5B6D66",
 };
+
+const BOTTLES = [
+  { img: "/products/evian750.jpg", name: "evian 750 ml", note: "The table bottle" },
+  { img: "/products/panna1l.jpg", name: "Acqua Panna 1 L", note: "The kitchen staple" },
+  { img: "/products/pellegrino750.jpg", name: "S.Pellegrino 750 ml", note: "The table sparkling" },
+  { img: "/products/saratoga28.jpg", name: "Saratoga 28 oz", note: "The statement bottle" },
+  { img: "/products/saratoga12.jpg", name: "Saratoga 12 oz", note: "The cocktail-hour pour" },
+  { img: "/products/evian500.jpg", name: "evian 500 ml", note: "The traveler" },
+];
+
+const WATERS = [
+  { w: "Featherlight", b: "Saratoga", d: "Clean, slightly sweet, crisp finish" },
+  { w: "Soft", b: "Acqua Panna", d: "Velvety, naturally alkaline" },
+  { w: "Balanced", b: "evian", d: "The neutral, complete house pour" },
+  { w: "Full-bodied", b: "S.Pellegrino", d: "Structured, saline, fine bubbles" },
+];
 
 function streetName(address) {
   const m = address.trim().replace(/^[0-9-\s]+/, "").split(",")[0].trim();
@@ -19,18 +35,41 @@ function log(payload) {
 }
 
 const input = {
-  width: "100%", boxSizing: "border-box", padding: "14px 16px", fontSize: 16,
+  width: "100%", boxSizing: "border-box", padding: "15px 17px", fontSize: 16.5,
   fontFamily: "'Jost', sans-serif", border: `1px solid ${C.line}`, borderRadius: 2,
   background: "#fff", color: C.ink, outline: "none",
 };
 const btn = {
   background: C.bottle, color: "#fff", border: "none", borderRadius: 999,
-  padding: "15px 34px", fontSize: 15, letterSpacing: "0.04em",
-  fontFamily: "'Jost', sans-serif", cursor: "pointer", marginTop: 18,
+  padding: "16px 36px", fontSize: 15.5, letterSpacing: "0.04em",
+  fontFamily: "'Jost', sans-serif", cursor: "pointer",
 };
+const serif = { fontFamily: "'Cormorant Garamond', serif" };
+
+function RouteCheck({ street, zip, setStreet, setZip, onCheck, error, autoFocus }) {
+  return (
+    <div>
+      <div style={{ display: "grid", gap: 12 }}>
+        <input style={input} placeholder="Street address — 123 Ocean Blvd" value={street}
+          autoFocus={autoFocus} onChange={(e) => setStreet(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && onCheck()} />
+        <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+          <input style={{ ...input, width: 150 }} placeholder="Zip" inputMode="numeric" maxLength={5}
+            value={zip} onChange={(e) => setZip(e.target.value.replace(/\D/g, ""))}
+            onKeyDown={(e) => e.key === "Enter" && onCheck()} />
+          <button style={btn} onClick={onCheck}>Check my route</button>
+        </div>
+      </div>
+      {error && <p style={{ color: "#8C3B33", fontSize: 14.5, marginTop: 12 }}>{error}</p>}
+      <p style={{ fontSize: 13, color: C.sub, marginTop: 12 }}>
+        We serve a limited number of homes per route — your street decides your delivery day.
+      </p>
+    </div>
+  );
+}
 
 export default function TastingFlow() {
-  const [step, setStep] = useState(1); // 1 route, 1.5 waitlist-done, 2 confirm, 3 details, 4 pay
+  const [step, setStep] = useState(1); // 1 landing, 1.5 waitlist-done, 2 confirm, 3 details, 4 pay
   const [street, setStreet] = useState("");
   const [zip, setZip] = useState("");
   const [inZone, setInZone] = useState(null);
@@ -42,8 +81,8 @@ export default function TastingFlow() {
   const [gate, setGate] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
+  const topRef = useRef(null);
 
-  // Prefill from the popup handoff (?addr=)
   useEffect(() => {
     try { window.fbq && window.fbq("track", "ViewContent", { content_name: "Tasting Case", value: 50, currency: "USD" }); } catch {}
     const a = new URLSearchParams(window.location.search).get("addr");
@@ -56,6 +95,10 @@ export default function TastingFlow() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (step !== 1) window.scrollTo({ top: 0 });
+  }, [step]);
 
   function checkRoute(st, zp) {
     const a = (st ?? street).trim();
@@ -101,152 +144,225 @@ export default function TastingFlow() {
   }
 
   const dateLabel = firstDate?.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+  const checkProps = { street, zip, setStreet, setZip, onCheck: () => checkRoute(), error };
 
   return (
-    <div style={{ minHeight: "100vh", background: C.paper, color: C.ink, fontFamily: "'Jost', sans-serif" }}>
+    <div ref={topRef} style={{ minHeight: "100vh", background: C.paper, color: C.ink, fontFamily: "'Jost', sans-serif" }}>
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
 
-      <header style={{ padding: "26px 24px 0", maxWidth: 720, margin: "0 auto" }}>
+      <header style={{ padding: "26px 24px 0", maxWidth: 1080, margin: "0 auto" }}>
         <a href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
           <img src="/logo.png" alt="" style={{ height: 34, width: 34 }} />
-          <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 26, fontWeight: 600, color: C.bottle }}>Sorgente</span>
+          <span style={{ ...serif, fontSize: 26, fontWeight: 600, color: C.bottle }}>Sorgente</span>
         </a>
       </header>
 
-      <main style={{ maxWidth: 640, margin: "0 auto", padding: "64px 24px 100px" }}>
-
-        {step === 1 && (
-          <section>
-            <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500, fontSize: "clamp(32px, 5vw, 46px)", lineHeight: 1.12, color: C.bottleDeep, margin: 0 }}>
-              We serve a limited number of homes per route.
-            </h1>
-            <p style={{ color: C.sub, fontSize: 16, lineHeight: 1.7, marginTop: 16, fontWeight: 300 }}>
-              The Tasting Case — evian, Acqua Panna, S.Pellegrino, and Saratoga in glass, $50,
-              credited in full toward your first month. Check whether your street is on a route.
-            </p>
-            <div style={{ marginTop: 30, display: "grid", gap: 18 }}>
+      {step === 1 && (
+        <main>
+          {/* Hero: the product + the check, together */}
+          <section style={{ maxWidth: 1080, margin: "0 auto", padding: "52px 24px 64px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 52, alignItems: "center" }}>
               <div>
-                <label style={{ display: "block", fontSize: 14, letterSpacing: "0.06em", color: C.bottle, marginBottom: 8 }}>STREET ADDRESS</label>
-                <input
-                  style={{ ...input, fontSize: 17.5, padding: "16px 18px" }}
-                  placeholder="123 Ocean Blvd"
-                  value={street}
-                  onChange={(e) => setStreet(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && checkRoute()}
-                  autoFocus
-                />
+                <div style={{ ...serif, fontSize: 15, color: C.sub, letterSpacing: "0.16em" }}>THE TASTING CASE — $50</div>
+                <h1 style={{ ...serif, fontWeight: 500, fontSize: "clamp(34px, 4.6vw, 52px)", lineHeight: 1.1, margin: "10px 0 0", color: C.bottleDeep }}>
+                  Six of the world's finest waters, at your door.
+                </h1>
+                <p style={{ fontSize: 16.5, lineHeight: 1.7, color: C.sub, marginTop: 18, fontWeight: 300 }}>
+                  evian, Acqua Panna, S.Pellegrino, and Saratoga — curated like a flight,
+                  delivered on your street's route day. And the $50 is credited in full
+                  toward your first month, so if you continue, the tasting was free.
+                </p>
+                <div style={{ marginTop: 26 }}>
+                  <RouteCheck {...checkProps} autoFocus={false} />
+                </div>
               </div>
-              <div>
-                <label style={{ display: "block", fontSize: 14, letterSpacing: "0.06em", color: C.bottle, marginBottom: 8 }}>ZIP CODE</label>
-                <input
-                  style={{ ...input, fontSize: 17.5, padding: "16px 18px", maxWidth: 200 }}
-                  placeholder="33480"
-                  inputMode="numeric"
-                  maxLength={5}
-                  value={zip}
-                  onChange={(e) => setZip(e.target.value.replace(/\D/g, ""))}
-                  onKeyDown={(e) => e.key === "Enter" && checkRoute()}
-                />
-              </div>
-              <div><button style={btn} onClick={() => checkRoute()}>Check my route</button></div>
+              <img src="/collection.jpg" alt="The six bottles of the Sorgente Tasting Case"
+                style={{ width: "100%", borderRadius: 2, display: "block", boxShadow: "0 24px 60px rgba(20,43,36,0.12)" }} />
             </div>
           </section>
-        )}
 
-        {step === 2 && inZone && (
-          <section>
-            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 15, color: C.sub, letterSpacing: "0.14em" }}>GOOD NEWS</div>
-            <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500, fontSize: "clamp(30px, 4.6vw, 42px)", lineHeight: 1.15, color: C.bottleDeep, marginTop: 10 }}>
-              {streetName(street)} is on our {routeDay} route.
-            </h1>
-            <p style={{ color: C.sub, fontSize: 16.5, lineHeight: 1.7, marginTop: 16, fontWeight: 300 }}>
-              Your Tasting Case can arrive as soon as <span style={{ color: C.bottle }}>{dateLabel}</span>.
-            </p>
-            <button style={btn} onClick={() => setStep(3)}>Reserve my Tasting Case</button>
+          {/* What's inside */}
+          <section style={{ background: C.mist, padding: "64px 24px" }}>
+            <div style={{ maxWidth: 1080, margin: "0 auto" }}>
+              <div style={{ ...serif, fontSize: 30, fontWeight: 500, color: C.bottleDeep }}>Inside the case</div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 14, marginTop: 26 }}>
+                {BOTTLES.map((b) => (
+                  <div key={b.name} style={{ background: "#fff", padding: 12 }}>
+                    <img src={b.img} alt={b.name} loading="lazy"
+                      style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block" }} />
+                    <div style={{ ...serif, fontSize: 17, fontWeight: 600, color: C.bottle, marginTop: 10 }}>{b.name}</div>
+                    <div style={{ fontSize: 12.5, color: C.sub, marginTop: 2 }}>{b.note}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 20, marginTop: 30 }}>
+                {WATERS.map((x) => (
+                  <div key={x.b} style={{ borderTop: `2px solid ${C.bottle}`, paddingTop: 12 }}>
+                    <div style={{ ...serif, fontSize: 13.5, color: C.sub, letterSpacing: "0.14em", textTransform: "uppercase" }}>{x.w}</div>
+                    <div style={{ ...serif, fontSize: 19, fontWeight: 600, color: C.bottle }}>{x.b}</div>
+                    <div style={{ fontSize: 13.5, color: C.sub, marginTop: 4 }}>{x.d}</div>
+                  </div>
+                ))}
+              </div>
+              <p style={{ fontSize: 14, color: C.sub, marginTop: 22, fontWeight: 300, maxWidth: 620 }}>
+                Still water has terroir — every spring carries the rock it rose through.
+                The case spans the whole spectrum, featherlight to full-bodied, so your
+                table finds its favorites.
+              </p>
+            </div>
           </section>
-        )}
 
-        {step === 2 && !inZone && (
-          <section>
-            <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500, fontSize: "clamp(30px, 4.6vw, 42px)", lineHeight: 1.15, color: C.bottleDeep, margin: 0 }}>
-              We haven't opened your route yet.
-            </h1>
-            <p style={{ color: C.sub, fontSize: 16, lineHeight: 1.7, marginTop: 16, fontWeight: 300 }}>
-              Leave your number and you'll be the first to know when we do.
+          {/* How the $50 comes back */}
+          <section style={{ maxWidth: 1080, margin: "0 auto", padding: "72px 24px" }}>
+            <div style={{ ...serif, fontSize: 30, fontWeight: 500, color: C.bottleDeep }}>How the tasting works</div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 32, marginTop: 28 }}>
+              {[
+                ["01", "Taste all six", "Your case arrives on your route day, chilled. Take the week — table, kitchen, poolside."],
+                ["02", "Text us your favorites", "Reply to our delivery text at (561) 401-0695. Two words is enough."],
+                ["03", "We compose your case", "Your monthly delivery, built around your favorites — with the $50 credited to your first invoice."],
+              ].map(([n, t, d]) => (
+                <div key={n}>
+                  <div style={{ ...serif, fontSize: 15, color: C.sub, letterSpacing: "0.14em" }}>{n}</div>
+                  <div style={{ ...serif, fontSize: 21, fontWeight: 600, color: C.bottle, marginTop: 6 }}>{t}</div>
+                  <p style={{ fontSize: 14.5, lineHeight: 1.65, color: C.sub, marginTop: 8, fontWeight: 300 }}>{d}</p>
+                </div>
+              ))}
+            </div>
+            <p style={{ fontSize: 14.5, color: C.sub, marginTop: 20, fontWeight: 300 }}>
+              Keep it a one-time case if you like — no obligation, no follow-up beyond one text.
             </p>
+          </section>
+
+          {/* Founder trust */}
+          <section style={{ background: C.mist, padding: "64px 24px" }}>
+            <div style={{ maxWidth: 880, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 44, alignItems: "center" }}>
+              <img src="/founder.jpg" alt="Matthew, founder of Sorgente"
+                style={{ width: "100%", maxWidth: 300, margin: "0 auto", display: "block", borderRadius: 2, boxShadow: "0 18px 44px rgba(20,43,36,0.18)" }} />
+              <div>
+                <div style={{ ...serif, fontSize: 26, fontWeight: 500, color: C.bottleDeep, lineHeight: 1.25 }}>
+                  Delivered by the founder, not a fleet.
+                </div>
+                <p style={{ fontSize: 15.5, lineHeight: 1.75, color: C.ink, marginTop: 14, fontWeight: 300 }}>
+                  I'm Matthew — an Ironman, which means I take hydration more seriously than
+                  is strictly reasonable. I carry every case in myself, put it where you keep
+                  your water, and take the empty glass when I go.
+                </p>
+                <p style={{ fontSize: 14, color: C.sub, marginTop: 14 }}>— Matthew, founder · Ironman Florida finisher</p>
+              </div>
+            </div>
+          </section>
+
+          {/* Final CTA */}
+          <section style={{ maxWidth: 720, margin: "0 auto", padding: "72px 24px 100px" }}>
+            <div style={{ ...serif, fontSize: "clamp(28px, 4.4vw, 40px)", fontWeight: 500, color: C.bottleDeep, lineHeight: 1.15 }}>
+              See when your street's route runs.
+            </div>
             <div style={{ marginTop: 24 }}>
-              <input style={input} placeholder="Mobile number" value={wlPhone} inputMode="tel"
-                onChange={(e) => setWlPhone(e.target.value)} />
-              <button style={btn} onClick={() => {
-                log({ type: "waitlist", address: `${street.trim()}, ${zip.trim()}`, phone: wlPhone });
-                setStep(1.5);
-              }}>Keep me posted</button>
+              <RouteCheck {...checkProps} autoFocus={false} />
             </div>
           </section>
-        )}
+        </main>
+      )}
 
-        {step === 1.5 && (
-          <section>
-            <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500, fontSize: 36, color: C.bottleDeep }}>You're on the list.</h1>
-            <p style={{ color: C.sub, fontSize: 16, lineHeight: 1.7, fontWeight: 300 }}>
-              When your route opens, you'll hear from us first — by text, of course.
-            </p>
-          </section>
-        )}
+      {step !== 1 && (
+        <main style={{ maxWidth: 640, margin: "0 auto", padding: "64px 24px 100px" }}>
+          {step === 2 && inZone && (
+            <section>
+              <div style={{ ...serif, fontSize: 15, color: C.sub, letterSpacing: "0.14em" }}>GOOD NEWS</div>
+              <h1 style={{ ...serif, fontWeight: 500, fontSize: "clamp(30px, 4.6vw, 42px)", lineHeight: 1.15, color: C.bottleDeep, marginTop: 10 }}>
+                {streetName(street)} is on our {routeDay} route.
+              </h1>
+              <p style={{ color: C.sub, fontSize: 16.5, lineHeight: 1.7, marginTop: 16, fontWeight: 300 }}>
+                Your Tasting Case can arrive as soon as <span style={{ color: C.bottle }}>{dateLabel}</span> — chilled, carried in, six waters.
+              </p>
+              <button style={{ ...btn, marginTop: 22 }} onClick={() => setStep(3)}>Reserve my Tasting Case</button>
+            </section>
+          )}
 
-        {step === 3 && (
-          <section>
-            <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500, fontSize: "clamp(28px, 4.2vw, 38px)", color: C.bottleDeep, margin: 0 }}>
-              A few details for {routeDay}.
-            </h1>
-            <div style={{ display: "grid", gap: 14, marginTop: 26 }}>
-              <input style={input} placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
-              <div>
-                <input style={input} placeholder="Mobile" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
-                <div style={{ fontSize: 13, color: C.sub, marginTop: 6 }}>We text delivery updates — nothing else.</div>
+          {step === 2 && !inZone && (
+            <section>
+              <h1 style={{ ...serif, fontWeight: 500, fontSize: "clamp(30px, 4.6vw, 42px)", lineHeight: 1.15, color: C.bottleDeep, margin: 0 }}>
+                We haven't opened your route yet.
+              </h1>
+              <p style={{ color: C.sub, fontSize: 16, lineHeight: 1.7, marginTop: 16, fontWeight: 300 }}>
+                Leave your number and you'll be the first to know when we do.
+              </p>
+              <div style={{ marginTop: 24, display: "grid", gap: 14 }}>
+                <input style={input} placeholder="Mobile number" inputMode="tel" value={wlPhone}
+                  onChange={(e) => setWlPhone(e.target.value)} />
+                <div><button style={btn} onClick={() => {
+                  log({ type: "waitlist", address: `${street.trim()}, ${zip.trim()}`, phone: wlPhone });
+                  setStep(1.5);
+                }}>Keep me posted</button></div>
               </div>
-              <textarea style={{ ...input, minHeight: 80, resize: "vertical" }}
-                placeholder="Gate code, entry notes, preferred drop spot (optional)"
-                value={gate} onChange={(e) => setGate(e.target.value)} />
-            </div>
-            <button style={btn} onClick={() => { setError(null); setStep(4); }}>Continue</button>
-          </section>
-        )}
+            </section>
+          )}
 
-        {step === 4 && (
-          <section>
-            <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500, fontSize: "clamp(28px, 4.2vw, 38px)", color: C.bottleDeep, margin: 0 }}>
-              The Tasting Case
-            </h1>
-            <div style={{ borderTop: `2px solid ${C.bottle}`, marginTop: 22, paddingTop: 18, fontSize: 16, lineHeight: 2.1 }}>
-              <div>evian — 750 ml glass</div>
-              <div>Acqua Panna — 1 L glass</div>
-              <div>S.Pellegrino — 750 ml sparkling</div>
-              <div>Saratoga — 28 oz &amp; 12 oz cobalt glass</div>
-              <div>evian — 500 ml, the traveler</div>
-              <div style={{ borderTop: `1px solid ${C.line}`, marginTop: 12, paddingTop: 12, display: "flex", justifyContent: "space-between" }}>
-                <span style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: 20 }}>Delivered {dateLabel}</span>
-                <span style={{ fontWeight: 500, fontSize: 20 }}>$50</span>
+          {step === 1.5 && (
+            <section>
+              <h1 style={{ ...serif, fontWeight: 500, fontSize: 36, color: C.bottleDeep }}>You're on the list.</h1>
+              <p style={{ color: C.sub, fontSize: 16, lineHeight: 1.7, fontWeight: 300 }}>
+                When your route opens, you'll hear from us first — by text, of course.
+              </p>
+            </section>
+          )}
+
+          {step === 3 && (
+            <section>
+              <h1 style={{ ...serif, fontWeight: 500, fontSize: "clamp(28px, 4.2vw, 38px)", color: C.bottleDeep, margin: 0 }}>
+                A few details for {routeDay}.
+              </h1>
+              <div style={{ display: "grid", gap: 14, marginTop: 26 }}>
+                <input style={input} placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
+                <div>
+                  <input style={input} placeholder="Mobile" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                  <div style={{ fontSize: 13, color: C.sub, marginTop: 6 }}>We text delivery updates — nothing else.</div>
+                </div>
+                <textarea style={{ ...input, minHeight: 80, resize: "vertical" }}
+                  placeholder="Gate code, entry notes, preferred drop spot (optional)"
+                  value={gate} onChange={(e) => setGate(e.target.value)} />
               </div>
-            </div>
-            <p style={{ fontSize: 14.5, color: C.sub, lineHeight: 1.65, marginTop: 14 }}>
-              Credited in full toward your first month of delivery.
-            </p>
-            <button style={{ ...btn, opacity: busy ? 0.7 : 1 }} disabled={busy} onClick={pay}>
-              {busy ? "Opening secure checkout…" : "Reserve for $50"}
+              <button style={{ ...btn, marginTop: 22 }} onClick={() => { setError(null); setStep(4); }}>Continue</button>
+            </section>
+          )}
+
+          {step === 4 && (
+            <section>
+              <h1 style={{ ...serif, fontWeight: 500, fontSize: "clamp(28px, 4.2vw, 38px)", color: C.bottleDeep, margin: 0 }}>
+                The Tasting Case
+              </h1>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, marginTop: 22 }}>
+                {BOTTLES.map((b) => (
+                  <img key={b.name} src={b.img} alt={b.name}
+                    style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block", borderRadius: 2 }} />
+                ))}
+              </div>
+              <div style={{ borderTop: `2px solid ${C.bottle}`, marginTop: 22, paddingTop: 16, fontSize: 15.5, lineHeight: 1.9 }}>
+                <div>evian 750 ml &amp; 500 ml · Acqua Panna 1 L · S.Pellegrino sparkling · Saratoga 28 oz &amp; 12 oz</div>
+                <div style={{ borderTop: `1px solid ${C.line}`, marginTop: 12, paddingTop: 12, display: "flex", justifyContent: "space-between" }}>
+                  <span style={{ ...serif, fontWeight: 600, fontSize: 20 }}>Delivered {dateLabel}</span>
+                  <span style={{ fontWeight: 500, fontSize: 20 }}>$50</span>
+                </div>
+              </div>
+              <p style={{ fontSize: 14.5, color: C.sub, lineHeight: 1.65, marginTop: 14 }}>
+                Credited in full toward your first month of delivery.
+              </p>
+              <button style={{ ...btn, marginTop: 20, opacity: busy ? 0.7 : 1 }} disabled={busy} onClick={pay}>
+                {busy ? "Opening secure checkout…" : "Reserve for $50"}
+              </button>
+            </section>
+          )}
+
+          {error && <p style={{ color: "#8C3B33", fontSize: 14.5, marginTop: 16 }}>{error}</p>}
+
+          {step >= 2 && step !== 1.5 && (
+            <button onClick={() => setStep(step === 2 ? 1 : step - 1)}
+              style={{ background: "none", border: "none", color: C.sub, fontSize: 13.5, marginTop: 34, cursor: "pointer", fontFamily: "'Jost', sans-serif", padding: 0 }}>
+              ← Back
             </button>
-          </section>
-        )}
-
-        {error && <p style={{ color: "#8C3B33", fontSize: 14.5, marginTop: 16 }}>{error}</p>}
-
-        {step >= 2 && step !== 1.5 && (
-          <button onClick={() => setStep(step === 2 ? 1 : step - 1)}
-            style={{ background: "none", border: "none", color: C.sub, fontSize: 13.5, marginTop: 34, cursor: "pointer", fontFamily: "'Jost', sans-serif", padding: 0 }}>
-            ← Back
-          </button>
-        )}
-      </main>
+          )}
+        </main>
+      )}
     </div>
   );
 }
