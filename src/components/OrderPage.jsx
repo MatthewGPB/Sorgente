@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { zipInZone, routeFor, DAY_INDEX, routeStatus } from "../lib/routes.js";
 
 // ————— Design tokens —————
@@ -100,14 +100,19 @@ function startOfDay(d) {
 function TastingPopup() {
   const [show, setShow] = useState(false);
   const [addr, setAddr] = useState("");
+  const done = useRef(false); // true once shown-and-dismissed OR previously seen
+
   useEffect(() => {
-    try { if (localStorage.getItem("sorgente_tasting_seen")) return; } catch {}
-    const timer = setTimeout(() => setShow(true), 7000);
-    const exit = (e) => { if (e.clientY <= 0) { setShow(true); } };
+    try { if (localStorage.getItem("sorgente_tasting_seen")) { done.current = true; return; } } catch {}
+    const maybeShow = () => { if (!done.current) setShow(true); };
+    const timer = setTimeout(maybeShow, 7000);
+    const exit = (e) => { if (e.clientY <= 0) maybeShow(); };
     document.addEventListener("mouseleave", exit);
     return () => { clearTimeout(timer); document.removeEventListener("mouseleave", exit); };
   }, []);
+
   const dismiss = () => {
+    done.current = true;
     setShow(false);
     try { localStorage.setItem("sorgente_tasting_seen", "1"); } catch {}
   };
