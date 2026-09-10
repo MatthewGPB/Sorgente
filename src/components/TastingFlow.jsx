@@ -213,11 +213,17 @@ export default function TastingFlow() {
                 </h1>
                 <p style={{ fontSize: 16.5, lineHeight: 1.7, color: C.sub, marginTop: 18, fontWeight: 300 }}>
                   evian, Acqua Panna, S.Pellegrino, and Saratoga — curated like a flight,
-                  delivered on your street's route day. And the $50 is credited in full
-                  toward your first month, so if you continue, the tasting was free.
+                  delivered on your street's route day. It's the first delivery of a monthly
+                  service that stocks your home with fine water — and the $50 comes back as
+                  credit, so if you continue, the tasting was free.
                 </p>
                 <div style={{ marginTop: 26 }}>
                   <RouteCheck {...checkProps} inputId="route-street-hero" autoFocus={false} />
+                  <p style={{ fontSize: 13.5, marginTop: 14 }}>
+                    <a href="/#order" style={{ color: C.sub, textDecoration: "none", borderBottom: `1px solid ${C.line}` }}>
+                      Already know your waters? Skip the tasting — start monthly delivery →
+                    </a>
+                  </p>
                 </div>
               </div>
               <img src="/collection.jpg" alt="The six bottles of the Sorgente Tasting Case"
@@ -263,7 +269,7 @@ export default function TastingFlow() {
               {[
                 ["01", "Taste all six", "Your case arrives on your route day, chilled. Take the week — table, kitchen, poolside."],
                 ["02", "Text us your favorites", "Reply to our delivery text at (561) 401-0695. Two words is enough."],
-                ["03", "We compose your case", "Your monthly delivery, built around your favorites — with the $50 credited to your first invoice."],
+                ["03", "We compose your case", "Your monthly delivery, built around your favorites — from $250/month, with the $50 credited to your first invoice."],
               ].map(([n, t, d]) => (
                 <div key={n}>
                   <div style={{ ...serif, fontSize: 15, color: C.sub, letterSpacing: "0.14em" }}>{n}</div>
@@ -274,6 +280,35 @@ export default function TastingFlow() {
             </div>
             <p style={{ fontSize: 14.5, color: C.sub, marginTop: 20, fontWeight: 300 }}>
               Keep it a one-time case if you like — no obligation, no follow-up beyond one text.
+            </p>
+          </section>
+
+          {/* The service behind the case */}
+          <section style={{ maxWidth: 1080, margin: "0 auto", padding: "0 24px 72px" }}>
+            <div style={{ ...serif, fontSize: 30, fontWeight: 500, color: C.bottleDeep }}>
+              What you're tasting your way into
+            </div>
+            <p style={{ fontSize: 15.5, lineHeight: 1.75, color: C.sub, maxWidth: 620, marginTop: 12, fontWeight: 300 }}>
+              Sorgente is a monthly water service for Palm Beach homes. Your cases arrive on
+              your street's route day — carried in, put away, empty glass taken — and pause
+              whenever you travel. The Tasting Case is how homes find their mix.
+            </p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 1, background: C.line, border: `1px solid ${C.line}`, marginTop: 30 }}>
+              {[
+                ["The Couple", "5 cases · $250/mo", "Still water for two — table and kitchen, every day."],
+                ["The Household", "10 cases · $450/mo", "Family, guests, entertaining — the full spectrum at the estate rate.", true],
+                ["The Estate", "20+ cases · custom", "Main house, guest house, staff, events — composed with you."],
+              ].map(([t, pr, d, popular]) => (
+                <div key={t} style={{ background: popular ? C.mist : "#fff", padding: "28px 26px" }}>
+                  {popular && <div style={{ fontSize: 11.5, letterSpacing: "0.12em", color: C.bottle, marginBottom: 8 }}>MOST HOMES</div>}
+                  <div style={{ ...serif, fontSize: 23, fontWeight: 600, color: C.bottle }}>{t}</div>
+                  <div style={{ fontSize: 15, color: C.ink, marginTop: 6 }}>{pr}</div>
+                  <p style={{ fontSize: 14, lineHeight: 1.65, color: C.sub, marginTop: 8, fontWeight: 300 }}>{d}</p>
+                </div>
+              ))}
+            </div>
+            <p style={{ fontSize: 14, color: C.sub, marginTop: 16, fontWeight: 300 }}>
+              Begin with the Tasting Case and your first month arrives $50 lighter.
             </p>
           </section>
 
@@ -317,7 +352,7 @@ export default function TastingFlow() {
                 {streetName(street)} is on our {routeDay} route.
               </h1>
               <p style={{ color: C.sub, fontSize: 16.5, lineHeight: 1.7, marginTop: 16, fontWeight: 300 }}>
-                Your Tasting Case can arrive as soon as <span style={{ color: C.bottle }}>{dateLabel}</span> — chilled, carried in, six waters.
+                Your Tasting Case can arrive as soon as <span style={{ color: C.bottle }}>{dateLabel}</span> — chilled, carried in, six waters. If you continue monthly, this becomes your standing delivery day.
               </p>
               <button style={{ ...btn, marginTop: 22 }} onClick={() => setStep(3)}>Reserve my Tasting Case</button>
             </section>
