@@ -153,6 +153,7 @@ export default function WaterDeliverySite() {
   const [selected, setSelected] = useState(null);
   const [zip, setZip] = useState("");
   const [tasting50, setTasting50] = useState(false);
+  const [activePreset, setActivePreset] = useState(null);
   const [busy, setBusy] = useState(false);
   const [checkoutError, setCheckoutError] = useState(null);
 
@@ -188,8 +189,10 @@ export default function WaterDeliverySite() {
     }
   }, []);
 
-  const change = (id, delta) =>
+  const change = (id, delta) => {
+    setActivePreset(null);
     setQty((q) => ({ ...q, [id]: Math.max(0, q[id] + delta) }));
+  };
 
   // Build the visible month grid
   const grid = useMemo(() => {
@@ -352,18 +355,30 @@ export default function WaterDeliverySite() {
               { name: "The Household", sub: "10 cases · $450/mo", d: "Family and entertaining — the full spectrum, estate rate.", tag: "MOST HOMES", mix: { evian750: 2, panna1l: 2, pellegrino750: 2, saratoga28: 2, saratoga12: 1, evian500: 1 } },
               { name: "The Estate", sub: "20 cases · $900/mo", d: "Main house, guests, staff — composed generously.", mix: { evian750: 4, panna1l: 4, pellegrino750: 4, saratoga28: 3, saratoga12: 3, evian500: 2 } },
             ].map((t) => (
-              <button key={t.name} onClick={() => { setQty({ ...t.mix }); }}
-                style={{ background: "#fff", border: "none", textAlign: "left", padding: "24px 22px", cursor: "pointer", fontFamily: "'Jost', sans-serif" }}>
+              <button key={t.name}
+                onClick={() => {
+                  setQty({ ...t.mix });
+                  setActivePreset(t.name);
+                  setTimeout(() => document.getElementById("cases-grid")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+                }}
+                style={{ background: activePreset === t.name ? C.mist : "#fff", border: "none", outline: activePreset === t.name ? `2px solid ${C.bottle}` : "none", outlineOffset: -2, textAlign: "left", padding: "24px 22px", cursor: "pointer", fontFamily: "'Jost', sans-serif", transition: "background .2s" }}>
                 {t.tag && <div style={{ fontSize: 11, letterSpacing: "0.12em", color: C.bottle, marginBottom: 6 }}>{t.tag}</div>}
                 <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 22, fontWeight: 600, color: C.bottle }}>{t.name}</div>
                 <div style={{ fontSize: 14.5, color: C.ink, marginTop: 4 }}>{t.sub}</div>
                 <div style={{ fontSize: 13, color: C.sub, marginTop: 6, lineHeight: 1.55 }}>{t.d}</div>
-                <div style={{ fontSize: 13, color: C.bottle, marginTop: 12, borderBottom: `1px solid ${C.line}`, display: "inline-block" }}>Start with this →</div>
+                <div style={{ fontSize: 13, color: C.bottle, marginTop: 12, borderBottom: activePreset === t.name ? "none" : `1px solid ${C.line}`, display: "inline-block", fontWeight: activePreset === t.name ? 500 : 400 }}>
+                  {activePreset === t.name ? "✓ Selected — your cases are below" : "Start with this →"}
+                </div>
               </button>
             ))}
           </div>
+          {activePreset && (
+            <p style={{ fontSize: 14, color: C.bottle, marginTop: 14 }}>
+              {activePreset} loaded — {totalCases} cases below. Adjust any of them, then choose your route day.
+            </p>
+          )}
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 1, background: C.line, border: `1px solid ${C.line}` }}>
+        <div id="cases-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 1, background: C.line, border: `1px solid ${C.line}`, scrollMarginTop: 24 }}>
           {SKUS.map((s) => (
             <div key={s.id} style={{ background: qty[s.id] > 0 ? C.mist : "#fff", padding: "26px 24px", transition: "background .25s", display: "flex", flexDirection: "column" }}>
               <img src={s.img} alt={`${s.brand} ${s.detail}`} loading="lazy"
