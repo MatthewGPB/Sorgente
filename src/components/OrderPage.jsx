@@ -379,19 +379,25 @@ export default function WaterDeliverySite() {
           {/* Calendar */}
           <div style={{ borderTop: `2px solid ${C.bottle}`, paddingTop: 22 }}>
             <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, color: C.bottle, fontWeight: 600 }}>First delivery date</div>
-            <p style={{ fontSize: 13.5, color: C.sub, marginTop: 6 }}>We deliver by neighborhood route. Enter your zip to see your route days.</p>
-            <input
-              value={zip}
-              onChange={(e) => setZip(e.target.value.replace(/\D/g, "").slice(0, 5))}
-              placeholder="Zip code — 33480"
-              name="postal-code"
-              autoComplete="postal-code"
-              inputMode="numeric"
-              style={{ width: 160, boxSizing: "border-box", padding: "11px 14px", fontSize: 15.5, fontFamily: "'Jost', sans-serif", border: `1px solid ${C.line}`, borderRadius: 2, marginTop: 12, outline: "none", background: "#fff", color: C.ink }}
-            />
+            <p style={{ fontSize: 13.5, color: C.sub, marginTop: 6 }}>We deliver by neighborhood route — your zip decides your delivery day.</p>
+            <div style={{ background: zipServed ? "transparent" : C.mist, padding: zipServed ? 0 : "16px 16px 18px", borderRadius: 2, marginTop: 14, transition: "all .25s" }}>
+              <label htmlFor="route-zip" style={{ display: "block", fontSize: 13, letterSpacing: "0.1em", color: C.bottle, fontWeight: 500 }}>
+                STEP 1 — YOUR ZIP CODE
+              </label>
+              <input
+                id="route-zip"
+                value={zip}
+                onChange={(e) => setZip(e.target.value.replace(/\D/g, "").slice(0, 5))}
+                placeholder="33480"
+                name="postal-code"
+                autoComplete="postal-code"
+                inputMode="numeric"
+                style={{ width: 190, boxSizing: "border-box", padding: "15px 17px", fontSize: 19, letterSpacing: "0.08em", fontFamily: "'Jost', sans-serif", border: `1.5px solid ${zipServed ? C.line : C.bottle}`, borderRadius: 2, marginTop: 10, outline: "none", background: "#fff", color: C.ink }}
+              />
+            </div>
             {zipServed && (
-              <p style={{ fontSize: 14, color: C.bottle, marginTop: 10 }}>
-                Your street is on our {routeDay} route — choose your first {routeDay}.
+              <p style={{ fontSize: 14, color: C.bottle, marginTop: 12 }}>
+                <span style={{ fontSize: 13, letterSpacing: "0.1em", fontWeight: 500 }}>STEP 2</span> — Your street is on our {routeDay} route. Choose your first {routeDay}.
               </p>
             )}
             {zipValid && !zipServed && (
@@ -400,7 +406,15 @@ export default function WaterDeliverySite() {
               </p>
             )}
 
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 16 }}>
+            <div style={{ position: "relative" }}>
+            {!zipServed && (
+              <div style={{ position: "absolute", inset: 0, zIndex: 2, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(251,252,251,0.72)" }}>
+                <div style={{ background: "#fff", border: `1px solid ${C.line}`, padding: "14px 22px", fontSize: 14, color: C.bottle, borderRadius: 2, boxShadow: "0 10px 30px rgba(20,43,36,0.08)" }}>
+                  Enter your zip above to unlock your route days
+                </div>
+              </div>
+            )}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 16, opacity: zipServed ? 1 : 0.45, transition: "opacity .25s" }}>
               <button aria-label="Previous month" disabled={!canGoBack} onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() - 1, 1))}
                 style={{ background: "none", border: "none", fontSize: 18, cursor: canGoBack ? "pointer" : "default", color: canGoBack ? C.bottle : C.line }}>‹</button>
               <div style={{ fontSize: 15, letterSpacing: "0.03em" }}>{monthLabel}</div>
@@ -408,12 +422,12 @@ export default function WaterDeliverySite() {
                 style={{ background: "none", border: "none", fontSize: 18, cursor: "pointer", color: C.bottle }}>›</button>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4, marginTop: 12, fontSize: 12.5, color: C.sub, textAlign: "center" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4, marginTop: 12, fontSize: 12.5, color: C.sub, textAlign: "center", opacity: zipServed ? 1 : 0.45 }}>
               {["S", "M", "T", "W", "T2", "F", "S2"].map((d) => (
                 <div key={d}>{d.replace("2", "")}</div>
               ))}
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4, marginTop: 6 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4, marginTop: 6, opacity: zipServed ? 1 : 0.45 }}>
               {grid.map((d, i) => {
                 if (!d) return <div key={`e${i}`} />;
                 const disabled = d < minDate || !zipServed || d.getDay() !== DAY_INDEX[routeDay];
@@ -443,6 +457,7 @@ export default function WaterDeliverySite() {
                 First delivery {selLabel}, then monthly.
               </p>
             )}
+            </div>
           </div>
         </div>
 
