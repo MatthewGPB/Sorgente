@@ -195,11 +195,17 @@ export default function TastingFlow() {
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
       <style>{`@media (max-width: 719px) { .hero-img-first { order: -1; } }`}</style>
 
-      <header style={{ padding: "26px 24px 0", maxWidth: 1080, margin: "0 auto" }}>
+      <header style={{ padding: "26px 24px 0", maxWidth: 1080, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px 20px" }}>
         <a href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
           <img src="/logo.png" alt="" style={{ height: 34, width: 34 }} />
           <span style={{ ...serif, fontSize: 26, fontWeight: 600, color: C.bottle }}>Sorgente</span>
         </a>
+        <nav aria-label="Site" style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap", fontSize: 14 }}>
+          <a href="/#order" style={{ color: C.bottle, textDecoration: "none" }}>Monthly delivery</a>
+          <a href="/estates" style={{ color: C.bottle, textDecoration: "none" }}>For estates</a>
+          <a href="/yachts" style={{ color: C.bottle, textDecoration: "none" }}>Yachts</a>
+          <a href="/faq" style={{ color: C.bottle, textDecoration: "none" }}>FAQ</a>
+        </nav>
       </header>
 
       {step === 1 && (
@@ -268,7 +274,7 @@ export default function TastingFlow() {
             <div style={{ ...serif, fontSize: 30, fontWeight: 500, color: C.bottleDeep }}>How the tasting works</div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 32, marginTop: 28 }}>
               {[
-                ["01", "Taste all six", "Your case arrives on your route day, chilled. Take the week — table, kitchen, poolside."],
+                ["01", "Taste all six", "Your case arrives on your route day, carried in. Take the week — table, kitchen, poolside."],
                 ["02", "Text us your favorites", "Reply to our delivery text at (561) 401-0695. Two words is enough."],
                 ["03", "We compose your case", "Your monthly delivery, built around your favorites — from $250/month, with the $50 credited to your first invoice."],
               ].map(([n, t, d]) => (
@@ -365,7 +371,7 @@ export default function TastingFlow() {
                 {streetName(street)} is on our {routeDay} route.
               </h1>
               <p style={{ color: C.sub, fontSize: 16.5, lineHeight: 1.7, marginTop: 16, fontWeight: 300 }}>
-                Your Tasting Case can arrive as soon as <span style={{ color: C.bottle }}>{dateLabel}</span> — chilled, carried in, six waters. If you continue monthly, this becomes your standing delivery day.
+                Your Tasting Case can arrive as soon as <span style={{ color: C.bottle }}>{dateLabel}</span> — carried in, six waters. If you continue monthly, this becomes your standing delivery day.
               </p>
               <p style={{ fontSize: 14, color: C.bottle, marginTop: 12 }}>
                 {routeDay} route: {routeStatus(routeDay)}.

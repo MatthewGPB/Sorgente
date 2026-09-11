@@ -15,6 +15,7 @@ const C = {
 };
 
 const FOUNDER_PHOTO = "/founder.jpg";
+const navLink = { color: "#1E3D33", textDecoration: "none", borderBottom: "1px solid transparent", paddingBottom: 1 };
 
 const SKUS = [
   {
@@ -238,10 +239,14 @@ export default function WaterDeliverySite() {
             Sorgente
           </span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap" }}>
-          <a href="/tasting" style={{ fontSize: 13.5, color: C.bottle, textDecoration: "none", letterSpacing: "0.05em", borderBottom: `1px solid ${C.line}` }}>The Tasting Case</a>
-          <span style={{ fontSize: 13, color: C.sub, letterSpacing: "0.06em" }}>Palm Beach · Jupiter Island · Manalapan</span>
-        </div>
+        <nav aria-label="Site" style={{ display: "flex", alignItems: "center", gap: "8px 20px", flexWrap: "wrap", fontSize: 14 }}>
+          <a href="#waters" style={navLink}>The waters</a>
+          <a href="/estates" style={navLink}>For estates</a>
+          <a href="/yachts" style={navLink}>Yachts</a>
+          <a href="/faq" style={navLink}>FAQ</a>
+          <a href="/tasting" style={navLink}>Tasting Case</a>
+          <a href="sms:+15614010695" style={{ ...navLink, color: C.sub }}>Text (561) 401-0695</a>
+        </nav>
       </header>
 
       {/* Hero */}
@@ -253,8 +258,8 @@ export default function WaterDeliverySite() {
             </h1>
             <p style={{ fontSize: 16.5, lineHeight: 1.7, color: C.sub, marginTop: 20, fontWeight: 300 }}>
               Still and sparkling — evian, Acqua Panna, S.Pellegrino, and Saratoga by the case,
-              delivered on your schedule. We carry it in, put it away, and take the empty glass with us.
-              One monthly delivery, paused whenever you travel.
+              on your street's delivery day each month. We carry it in, put it away, and take the
+              empty glass with us. Nobody needs to be home. One text pauses it when you travel.
             </p>
             <p style={{ fontSize: 15, marginTop: 22 }}>
               <a href="sms:+15614010695" style={{ color: C.bottle, textDecoration: "none", borderBottom: `1px solid ${C.line}` }}>
@@ -285,10 +290,28 @@ export default function WaterDeliverySite() {
             </div>
           ))}
         </div>
+
+        {/* What a house manager checks first */}
+        <div style={{ marginTop: 56, borderTop: `1px solid ${C.line}`, borderBottom: `1px solid ${C.line}`, padding: "22px 0", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: "12px 32px", fontSize: 14, color: C.ink }}>
+          {[
+            ["No signature needed", "Standing access instructions, taken once."],
+            ["Window texted the morning of", "To you or to staff — your choice."],
+            ["Put where you keep it", "Pantry, bar, garage fridge, guest house."],
+            ["Empties leave with us", "Nothing for staff to haul."],
+          ].map(([t, d]) => (
+            <div key={t}>
+              <div style={{ fontWeight: 500, color: C.bottle }}>{t}</div>
+              <div style={{ color: C.sub, fontSize: 13.5, marginTop: 2 }}>{d}</div>
+            </div>
+          ))}
+        </div>
+        <p style={{ fontSize: 14, color: C.sub, marginTop: 14 }}>
+          Managing a property or a boat? <a href="/estates" style={{ color: C.bottle }}>See how estate accounts work</a> or <a href="/yachts" style={{ color: C.bottle }}>yacht provisioning</a>.
+        </p>
       </section>
 
       {/* The Waters */}
-      <section style={{ background: C.mist, padding: "72px 24px", marginBottom: 72 }}>
+      <section id="waters" style={{ background: C.mist, padding: "72px 24px", marginBottom: 72, scrollMarginTop: 16 }}>
         <div style={{ maxWidth: 1080, margin: "0 auto" }}>
           <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 32, fontWeight: 500, color: C.bottleDeep }}>
             The Waters
@@ -354,6 +377,9 @@ export default function WaterDeliverySite() {
           <p style={{ fontSize: 14.5, color: C.sub, marginTop: 8, fontWeight: 300 }}>
             Start from how most homes run it — then adjust any case below.
           </p>
+          <p style={{ fontSize: 15, color: C.ink, marginTop: 10 }}>
+            <span style={{ fontWeight: 500 }}>{fmt(BASE_PRICE)} per case</span>, any water — <span style={{ fontWeight: 500 }}>{fmt(TIER_PRICE)}</span> at {TIER_AT} or more. Five-case minimum. Delivery, stocking, and glass pickup included.
+          </p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 1, background: C.line, border: `1px solid ${C.line}`, marginTop: 18 }}>
             {[
               { name: "The Couple", sub: "5 cases · $250/mo", d: "Still water for two — table and kitchen.", mix: { evian750: 2, panna1l: 1, pellegrino750: 1, saratoga28: 1, saratoga12: 0, evian500: 0 } },
@@ -399,6 +425,7 @@ export default function WaterDeliverySite() {
               <div style={{ fontSize: 15, marginTop: 2 }}>{s.name}</div>
               <div style={{ fontSize: 13.5, color: C.sub, marginTop: 8 }}>{s.detail}</div>
               <div style={{ fontSize: 13.5, color: C.sub }}>{s.origin} — {s.note}</div>
+              <div style={{ fontSize: 13.5, color: C.bottle, marginTop: 8 }}>{fmt(BASE_PRICE)} / case · {fmt(TIER_PRICE)} at {TIER_AT}+</div>
               <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: "auto", paddingTop: 20 }}>
                 <button aria-label={`Remove a case of ${s.brand} ${s.detail}`} onClick={() => change(s.id, -1)}
                   style={{ width: 38, height: 38, borderRadius: "50%", border: `1px solid ${C.line}`, background: "#fff", fontSize: 18, cursor: "pointer", color: C.bottle }}>−</button>
@@ -448,8 +475,8 @@ export default function WaterDeliverySite() {
             <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, color: C.bottle, fontWeight: 600 }}>First delivery date</div>
             <p style={{ fontSize: 13.5, color: C.sub, marginTop: 6 }}>We deliver by neighborhood route — your zip decides your delivery day.</p>
             <div style={{ background: zipServed ? "transparent" : C.mist, padding: zipServed ? 0 : "16px 16px 18px", borderRadius: 2, marginTop: 14, transition: "all .25s" }}>
-              <label htmlFor="route-zip" style={{ display: "block", fontSize: 13, letterSpacing: "0.1em", color: C.bottle, fontWeight: 500 }}>
-                STEP 1 — YOUR ZIP CODE
+              <label htmlFor="route-zip" style={{ display: "block", fontSize: 14, color: C.bottle, fontWeight: 500 }}>
+                Your zip code
               </label>
               <input
                 id="route-zip"
@@ -464,7 +491,7 @@ export default function WaterDeliverySite() {
             </div>
             {zipServed && (
               <p style={{ fontSize: 14, color: C.bottle, marginTop: 12 }}>
-                <span style={{ fontSize: 13, letterSpacing: "0.1em", fontWeight: 500 }}>STEP 2</span> — Your street is on our {routeDay} route ({routeStatus(routeDay)}). Choose your first {routeDay}.
+                Your street is on our {routeDay} route ({routeStatus(routeDay)}). Choose your first {routeDay}.
               </p>
             )}
             {zipValid && !zipServed && (
@@ -473,15 +500,14 @@ export default function WaterDeliverySite() {
               </p>
             )}
 
-            <div style={{ position: "relative" }}>
-            {!zipServed && (
-              <div style={{ position: "absolute", inset: 0, zIndex: 2, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(251,252,251,0.72)" }}>
-                <div style={{ background: "#fff", border: `1px solid ${C.line}`, padding: "14px 22px", fontSize: 14, color: C.bottle, borderRadius: 2, boxShadow: "0 10px 30px rgba(20,43,36,0.08)" }}>
-                  Enter your zip above to unlock your route days
-                </div>
-              </div>
+            {!zipServed && !zipValid && (
+              <p style={{ fontSize: 13.5, color: C.sub, marginTop: 12 }}>
+                Routes run Tuesday, Thursday, and Saturday. Your calendar appears once we know your zip.
+              </p>
             )}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 16, opacity: zipServed ? 1 : 0.45, transition: "opacity .25s" }}>
+            {zipServed && (
+            <div style={{ position: "relative" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 16 }}>
               <button aria-label="Previous month" disabled={!canGoBack} onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() - 1, 1))}
                 style={{ background: "none", border: "none", fontSize: 18, cursor: canGoBack ? "pointer" : "default", color: canGoBack ? C.bottle : C.line }}>‹</button>
               <div style={{ fontSize: 15, letterSpacing: "0.03em" }}>{monthLabel}</div>
@@ -489,12 +515,12 @@ export default function WaterDeliverySite() {
                 style={{ background: "none", border: "none", fontSize: 18, cursor: "pointer", color: C.bottle }}>›</button>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4, marginTop: 12, fontSize: 12.5, color: C.sub, textAlign: "center", opacity: zipServed ? 1 : 0.45 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4, marginTop: 12, fontSize: 12.5, color: C.sub, textAlign: "center" }}>
               {["S", "M", "T", "W", "T2", "F", "S2"].map((d) => (
                 <div key={d}>{d.replace("2", "")}</div>
               ))}
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4, marginTop: 6, opacity: zipServed ? 1 : 0.45 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4, marginTop: 6 }}>
               {grid.map((d, i) => {
                 if (!d) return <div key={`e${i}`} />;
                 const disabled = d < minDate || !zipServed || d.getDay() !== DAY_INDEX[routeDay];
@@ -525,6 +551,7 @@ export default function WaterDeliverySite() {
               </p>
             )}
             </div>
+            )}
           </div>
         </div>
 
@@ -567,6 +594,9 @@ export default function WaterDeliverySite() {
           <p style={{ fontSize: 12.5, color: C.sub, marginTop: 12 }}>
             Billed monthly via Stripe secure checkout. Pause for travel or cancel anytime with two days' notice.
           </p>
+          <p style={{ fontSize: 13.5, color: C.sub, marginTop: 10, lineHeight: 1.6, maxWidth: 560 }}>
+            After checkout you'll get a text to confirm access — gate code, where the cases go, who to notify — and a delivery window the morning of your day.
+          </p>
           <p style={{ fontSize: 13.5, color: C.sub, marginTop: 14, lineHeight: 1.6, maxWidth: 560 }}>
             Founder's guarantee: if your first month isn't exactly what I promised — carried in,
             put away, on your day — text me and the month is on me.
@@ -595,6 +625,20 @@ export default function WaterDeliverySite() {
             Check my route
           </a>
         </div>
+        <div style={{ border: `1px solid ${C.line}`, borderTop: "none", padding: "26px 36px", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "12px 24px", background: C.mist }}>
+          <div style={{ maxWidth: 560 }}>
+            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 22, fontWeight: 600, color: C.bottle }}>
+              Ordering for a property you manage, or a boat?
+            </div>
+            <p style={{ fontSize: 14.5, color: C.sub, lineHeight: 1.65, marginTop: 6, fontWeight: 300 }}>
+              Twenty cases and up, several properties, or a season's provisioning — I'll put a proposal together instead of having you guess.
+            </p>
+          </div>
+          <div style={{ display: "flex", gap: 20, flexWrap: "wrap", fontSize: 14.5 }}>
+            <a href="/estates" style={{ color: C.bottle, textDecoration: "none", borderBottom: `1px solid ${C.line}` }}>Estate accounts</a>
+            <a href="/yachts" style={{ color: C.bottle, textDecoration: "none", borderBottom: `1px solid ${C.line}` }}>Yacht provisioning</a>
+          </div>
+        </div>
       </section>
 
       {/* Service area map */}
@@ -606,11 +650,12 @@ export default function WaterDeliverySite() {
             </div>
             <p style={{ fontSize: 16, lineHeight: 1.8, color: C.sub, marginTop: 16, fontWeight: 300 }}>
               Sorgente serves Palm Beach County — from Jupiter Island and Juno Beach
-              down through Palm Beach, Manalapan, and Boca Raton. Marinas and yacht
-              provisioning included.
+              down through Palm Beach, Manalapan, and Boca Raton. Each route is capped at
+              twenty homes so the same person delivers every month.
             </p>
             <p style={{ fontSize: 14, color: C.sub, marginTop: 14 }}>
-              Outside the area? Write us — larger standing orders travel farther.
+              Marinas and private docks: <a href="/yachts" style={{ color: C.bottle }}>yacht provisioning</a>.
+              Outside the county? Write us — larger standing orders travel farther.
             </p>
           </div>
 
@@ -659,11 +704,6 @@ export default function WaterDeliverySite() {
                 <text x={(t.y < 100 ? 236 + (t.y - 46) * 0.1 : 244) + 12} y={t.y + 4} fill="#FFFFFF" fontFamily="Jost, sans-serif" fontSize="12.5">{t.label}</text>
               </g>
             ))}
-            {/* Cities outside service area, muted */}
-            <circle cx="226" cy="268" r="2.6" fill="#C9D6D1" />
-            <text x="196" y="258" fill="#8FA39B" fontFamily="Jost, sans-serif" fontSize="11.5">Fort Lauderdale</text>
-            <circle cx="204" cy="352" r="2.6" fill="#C9D6D1" />
-            <text x="176" y="344" fill="#8FA39B" fontFamily="Jost, sans-serif" fontSize="11.5">Miami</text>
             {/* Atlantic label */}
             <text x="286" y="300" fill="#8FA39B" fontFamily="Cormorant Garamond, serif" fontSize="15" fontStyle="italic" transform="rotate(78 286 300)">Atlantic Ocean</text>
           </svg>
@@ -675,30 +715,41 @@ export default function WaterDeliverySite() {
         <div style={{ maxWidth: 880, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 48, alignItems: "center" }}>
           <img
             src={FOUNDER_PHOTO}
-            alt="Matthew, founder of Sorgente, at the Ironman Florida finish"
+            alt="Matthew, founder of Sorgente"
             style={{ width: "100%", maxWidth: 340, margin: "0 auto", display: "block", borderRadius: 2, boxShadow: "0 18px 44px rgba(20,43,36,0.18)" }}
           />
           <div style={{ maxWidth: 480 }}>
           <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 30, fontWeight: 500, color: C.bottleDeep, lineHeight: 1.25 }}>
-            Why I only deliver water I'd train on
+            Delivered by the founder, not a fleet.
           </div>
           <p style={{ fontSize: 16.5, lineHeight: 1.8, color: C.ink, marginTop: 20, fontWeight: 300 }}>
-            I'm an Ironman. When you swim 2.4 miles, ride 112, and run a marathon in Florida heat,
-            hydration stops being a preference and becomes the whole game — what's in the water,
-            how it's bottled, how it tastes when you actually need it. Evian and Acqua Panna, in glass,
-            are what I keep in my own home. Sorgente exists so the houses I serve never think about
-            water again: it simply appears, chilled and put away, every month.
+            I'm Matthew. I keep evian and Acqua Panna in glass at home, and I started Sorgente
+            because there was no good way to have that just appear every month — carried in,
+            put away, empties gone — without someone on staff managing it. So I do it myself.
+            Every route is capped at twenty homes so the person who knows your gate code and
+            your pantry is the same person every time.
+          </p>
+          <p style={{ fontSize: 16.5, lineHeight: 1.8, color: C.ink, marginTop: 14, fontWeight: 300 }}>
+            I'm also an Ironman, which in practice means two things: I show up when I say I
+            will, and twenty cases up a staircase isn't a problem.
           </p>
           <p style={{ fontSize: 15, color: C.sub, marginTop: 22 }}>
-            — Matthew, founder · Ironman Florida finisher
+            — Matthew, founder · (561) 401-0695
           </p>
           </div>
         </div>
       </section>
 
-      <footer style={{ borderTop: `1px solid ${C.line}`, padding: "26px 24px", maxWidth: 1080, margin: "0 auto", display: "flex", justifyContent: "space-between", fontSize: 13, color: C.sub }}>
+      <footer style={{ borderTop: `1px solid ${C.line}`, padding: "26px 24px", maxWidth: 1080, margin: "0 auto", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "8px 24px", fontSize: 13, color: C.sub }}>
         <span>Sorgente — private water delivery</span>
-        <span><a href="sms:+15614010695" style={{ color: "inherit", textDecoration: "none" }}>(561) 401-0695</a> · <a href="/policies" style={{ color: "inherit", textDecoration: "none" }}>Policies</a> · matthew@growpalmbeach.com</span>
+        <nav aria-label="Footer" style={{ display: "flex", flexWrap: "wrap", gap: "6px 14px" }}>
+          <a href="/estates" style={{ color: "inherit", textDecoration: "none" }}>For estates</a>
+          <a href="/yachts" style={{ color: "inherit", textDecoration: "none" }}>Yachts</a>
+          <a href="/faq" style={{ color: "inherit", textDecoration: "none" }}>FAQ</a>
+          <a href="/policies" style={{ color: "inherit", textDecoration: "none" }}>Policies</a>
+          <a href="sms:+15614010695" style={{ color: "inherit", textDecoration: "none" }}>(561) 401-0695</a>
+          <a href="mailto:matthew@growpalmbeach.com" style={{ color: "inherit", textDecoration: "none" }}>matthew@growpalmbeach.com</a>
+        </nav>
       </footer>
     </div>
   );

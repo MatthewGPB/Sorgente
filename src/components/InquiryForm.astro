@@ -1,0 +1,120 @@
+---
+// Standing-order inquiry form used on /estates and /yachts.
+interface Props { kind: "estate" | "yacht"; heading: string; intro: string; }
+const { kind, heading, intro } = Astro.props;
+const isYacht = kind === "yacht";
+const smsBody = encodeURIComponent(
+  isYacht
+    ? "Hi Matthew — I'd like to talk about water provisioning for a yacht. "
+    : "Hi Matthew — I'd like to set up a standing water order for a property. "
+);
+---
+<section class="section" id="inquire">
+  <div class="wrap grid-2">
+    <div>
+      <h2>{heading}</h2>
+      <p class="lede" style="margin-top:14px">{intro}</p>
+      <div class="actions">
+        <a class="btn" href={`sms:+15614010695?&body=${smsBody}`}>Text Matthew directly</a>
+        <span class="muted small">(561) 401-0695 — replies within the hour, most days.</span>
+      </div>
+      <div class="quote" style="margin-top:36px">
+        <p>Every account is set up by me, delivered by me, and adjusted with one text. If your first month isn't exactly what was agreed — carried in, put away, on the day — the month is on me.</p>
+        <p class="sig">— Matthew, founder</p>
+      </div>
+    </div>
+
+    <form class="form" id="inquiry" novalidate>
+      <input type="hidden" name="kind" value={kind} />
+      <input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      <div class="row">
+        <div><label for="q-name">Your name</label><input id="q-name" name="name" autocomplete="name" required /></div>
+        <div>
+          <label for="q-role">Your role</label>
+          <select id="q-role" name="role">
+            {isYacht ? (
+              <>
+                <option>Captain</option>
+                <option>Chief stew</option>
+                <option>Owner</option>
+                <option>Management company</option>
+                <option>Other</option>
+              </>
+            ) : (
+              <>
+                <option>House manager / estate manager</option>
+                <option>Owner</option>
+                <option>Family office</option>
+                <option>Personal assistant</option>
+                <option>Other</option>
+              </>
+            )}
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div><label for="q-phone">Mobile</label><input id="q-phone" name="phone" inputmode="tel" autocomplete="tel" /></div>
+        <div><label for="q-email">Email</label><input id="q-email" name="email" type="email" autocomplete="email" /></div>
+      </div>
+      <div>
+        <label for="q-property">{isYacht ? "Vessel and marina (or slip)" : "Property location (town or neighborhood is enough)"}</label>
+        <input id="q-property" name="property" placeholder={isYacht ? "M/Y Example — Old Port Cove, North Palm Beach" : "Palm Beach — North End"} />
+      </div>
+      <div>
+        <label for="q-cases">{isYacht ? "Rough volume" : "Rough monthly volume"}</label>
+        <select id="q-cases" name="cases">
+          <option>Not sure yet</option>
+          <option>5–9 cases</option>
+          <option>10–19 cases</option>
+          <option>20–39 cases</option>
+          <option>40+ cases / pallet</option>
+        </select>
+      </div>
+      <div>
+        <label for="q-notes">Anything I should know</label>
+        <textarea id="q-notes" name="notes" placeholder={isYacht ? "Charter dates, crew size, glass vs. plastic split, delivery window…" : "Number of properties, access protocol, seasonal dates, preferred waters…"}></textarea>
+      </div>
+      <p class="form-error" id="q-error" hidden></p>
+      <div><button class="btn" type="submit" id="q-submit">Request a proposal</button></div>
+      <p class="form-note">You'll hear from Matthew within one business day, usually the same afternoon. No mailing list, no follow-up sequence.</p>
+    </form>
+
+    <div class="form-done" id="inquiry-done" hidden>
+      <h3>Received.</h3>
+      <p class="muted">I'll come back to you with a proposal — case mix, day, and price — usually the same afternoon. If it's urgent, text (561) 401-0695.</p>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  (function () {
+    var form = document.getElementById("inquiry");
+    var done = document.getElementById("inquiry-done");
+    var err = document.getElementById("q-error");
+    var btn = document.getElementById("q-submit");
+    if (!form) return;
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      err.hidden = true;
+      var data = Object.fromEntries(new FormData(form).entries());
+      data.page = location.pathname;
+      if (!data.name || data.name.trim().length < 2) { err.textContent = "Add your name."; err.hidden = false; return; }
+      var digits = (data.phone || "").replace(/\D/g, "");
+      if (digits.length < 10 && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email || "")) {
+        err.textContent = "Add a mobile number or an email so I can reach you."; err.hidden = false; return;
+      }
+      btn.disabled = true; btn.textContent = "Sending…";
+      try {
+        var res = await fetch("/api/inquiry", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+        var out = await res.json();
+        if (!res.ok) throw new Error(out.error || "Something went wrong.");
+        form.hidden = true; done.hidden = false;
+        try { window.fbq && fbq("track", "Lead", { content_name: data.kind + " inquiry" }); } catch (x) {}
+        try { window.gtag && gtag("event", "generate_lead", { lead_type: data.kind }); } catch (x) {}
+      } catch (x) {
+        err.textContent = x.message + " You can also text (561) 401-0695."; err.hidden = false;
+        btn.disabled = false; btn.textContent = "Request a proposal";
+      }
+    });
+  })();
+</script>

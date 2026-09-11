@@ -1,0 +1,99 @@
+---
+import Base from "../layouts/Base.astro";
+import InquiryForm from "../components/InquiryForm.astro";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: "Yacht water provisioning, Palm Beach",
+  provider: { "@type": "LocalBusiness", name: "Sorgente", telephone: "+1-561-401-0695", areaServed: "Palm Beach County, FL" },
+  serviceType: "Dockside bottled water provisioning",
+  url: "https://www.sorgentepb.com/yachts",
+};
+---
+<Base
+  title="Yacht Water Provisioning, Palm Beach — Sorgente"
+  description="Dockside delivery of evian, Acqua Panna, S.Pellegrino, and Saratoga for yachts in Palm Beach County — glass for the salon, evian in plastic for tenders and crew, brought aboard and stowed."
+  path="/yachts"
+  jsonLd={jsonLd}
+>
+  <section class="wrap hero">
+    <div class="hero-grid">
+      <div>
+        <h1>Water, dockside, stowed before the owner boards.</h1>
+        <p class="lede" style="margin-top:20px">
+          For captains and chief stews provisioning in Palm Beach County. The four waters
+          your guests expect — evian, Acqua Panna, S.Pellegrino, Saratoga — in glass for the
+          salon and the tables, and evian in plastic for the tender, the crew mess, and the
+          water toys. Delivered to the slip, carried aboard, stowed where you say.
+        </p>
+        <div class="actions">
+          <a class="btn" href="#inquire">Request a provisioning quote</a>
+          <a class="btn-ghost" href="sms:+15614010695">Or text (561) 401-0695</a>
+        </div>
+      </div>
+      <img src="/collection.jpg" alt="evian, Acqua Panna, S.Pellegrino, and Saratoga in glass" />
+    </div>
+  </section>
+
+  <section class="section mist">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>How provisioning works</h2>
+        <p>Text the order, name the slip and the window, and it's aboard. Standing orders for the season, or one large drop before a charter or a crossing.</p>
+      </div>
+      <div class="grid-3">
+        <div class="item">
+          <h3>By the case or the pallet</h3>
+          <p>Five cases for a weekend, forty for a season. Pallet quantities are broken down and carried aboard by hand — no forklift on the dock, nothing left on the finger pier.</p>
+        </div>
+        <div class="item">
+          <h3>Glass forward, plastic aft</h3>
+          <p>Most boats run a split: glass for guest spaces and dining, 500 ml evian in plastic for the tender, crew, and anywhere glass isn't welcome. Tell me the ratio once.</p>
+        </div>
+        <div class="item">
+          <h3>Stowed, not stacked on the passerelle</h3>
+          <p>Lazarette, pantry, crew mess, bar fridge — cases go where the stew wants them. Empty glass comes off on the next delivery.</p>
+        </div>
+        <div class="item">
+          <h3>Marinas across the county</h3>
+          <p>Palm Beach, North Palm Beach, Jupiter, Riviera Beach, Lake Worth, Boca. If you're at a private dock, that works too.</p>
+        </div>
+        <div class="item">
+          <h3>Invoiced to the boat</h3>
+          <p>Card on file for the vessel or the management company; invoices by email, itemized by water and case, ready for the owner's accounts.</p>
+        </div>
+        <div class="item">
+          <h3>Short notice, honestly handled</h3>
+          <p>Two days is the standard lead. If the owner just called and boards tomorrow, text me anyway — if it can be done, it will be.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Pricing</h2>
+        <p>Same price per case for every water, glass or plastic. Dockside delivery and stowing included.</p>
+      </div>
+      <div class="price-strip">
+        <div><strong>$50</strong><span>per case, 5-case minimum</span></div>
+        <div><strong>$45</strong><span>per case at 10 or more</span></div>
+        <div><strong>Quoted</strong><span>for pallet quantities and season-long standing orders</span></div>
+        <div><strong>$0</strong><span>delivery, carry-aboard, and empty-glass removal</span></div>
+      </div>
+      <p class="muted" style="margin-top:22px;max-width:62ch">
+        Case sizes: evian 750 ml (12) and 500 ml plastic (24), Acqua Panna 1 L (12),
+        S.Pellegrino 750 ml (12), Saratoga 28 oz (12) and 12 oz (24).
+        <a href="/#waters">Mineral profiles and pairings</a> if the chef asks.
+      </p>
+    </div>
+  </section>
+
+  <InquiryForm
+    kind="yacht"
+    heading="Request a provisioning quote"
+    intro="Vessel, marina, rough volume, and dates. I'll confirm availability and send a per-case figure the same day — most weeks within the hour."
+  />
+</Base>

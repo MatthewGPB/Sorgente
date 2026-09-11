@@ -1,0 +1,122 @@
+---
+import Base from "../layouts/Base.astro";
+import InquiryForm from "../components/InquiryForm.astro";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: "Standing water orders for estates",
+  provider: { "@type": "LocalBusiness", name: "Sorgente", telephone: "+1-561-401-0695", areaServed: "Palm Beach County, FL" },
+  serviceType: "Bottled water delivery and in-home stocking",
+  areaServed: ["Palm Beach", "Jupiter Island", "Manalapan", "Juno Beach", "Boca Raton"],
+  url: "https://www.sorgentepb.com/estates",
+};
+---
+<Base
+  title="Water for Estates & House Managers — Sorgente, Palm Beach"
+  description="A standing monthly order of evian, Acqua Panna, S.Pellegrino, and Saratoga in glass — delivered, carried in, and put away for Palm Beach estates. One card on file, one text to change anything."
+  path="/estates"
+  jsonLd={jsonLd}
+>
+  <section class="wrap hero">
+    <div class="hero-grid">
+      <div>
+        <h1>One text, and the house never runs out.</h1>
+        <p class="lede" style="margin-top:20px">
+          For house managers, estate managers, and family offices running one property or
+          several. A standing monthly order of fine water in glass, delivered on your route day,
+          carried to wherever you keep it, empties taken. No signature. No reorder. No thinking
+          about it.
+        </p>
+        <div class="actions">
+          <a class="btn" href="#inquire">Request a proposal</a>
+          <a class="btn-ghost" href="sms:+15614010695">Or text (561) 401-0695</a>
+        </div>
+      </div>
+      <img src="/collection.jpg" alt="evian, Acqua Panna, S.Pellegrino, and Saratoga in glass" />
+    </div>
+  </section>
+
+  <section class="section mist">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Built around how a house actually runs</h2>
+        <p>The delivery is the easy part. What you're paying for is that it happens the same way every month without anyone on staff having to manage it.</p>
+      </div>
+      <div class="grid-3">
+        <div class="item">
+          <h3>Access, once</h3>
+          <p>Gate code, staff entrance, where the cases go, where the empties are — we take it once and follow it every time. Standing instructions live on your account, not in a text thread.</p>
+        </div>
+        <div class="item">
+          <h3>A delivery window, the morning of</h3>
+          <p>You or your staff get a text with a window on the day. Nobody has to be home. If the house is closed up, tell us and it's held with no charge until you reopen.</p>
+        </div>
+        <div class="item">
+          <h3>Put away, not dropped</h3>
+          <p>Pantry, butler's pantry, bar, garage fridge, guest house — cases go where you keep them. On request, a few bottles go straight into the fridge so the first pour is cold.</p>
+        </div>
+        <div class="item">
+          <h3>Glass goes with us</h3>
+          <p>Empty glass from the previous month leaves on the same trip. Nothing accumulates, nothing for staff to haul.</p>
+        </div>
+        <div class="item">
+          <h3>One card, one invoice</h3>
+          <p>Billed monthly through Stripe on a single card on file. Invoices arrive by email and can go to the office, the bookkeeper, or the family office directly.</p>
+        </div>
+        <div class="item">
+          <h3>Several properties, one contact</h3>
+          <p>Main house, guest house, the boat, the Jupiter place — each with its own mix and day, all on one account and one number to text.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Pricing, in plain terms</h2>
+        <p>Every case is the same price regardless of water. Delivery, in-home stocking, and glass pickup are included — there is no delivery fee and no contract.</p>
+      </div>
+      <div class="price-strip">
+        <div><strong>$50</strong><span>per case, 5-case minimum</span></div>
+        <div><strong>$45</strong><span>per case at 10 or more — the estate rate, every month</span></div>
+        <div><strong>$0</strong><span>delivery, stocking, and empty-glass pickup</span></div>
+        <div><strong>2 days</strong><span>notice to pause, change, or cancel — no fees</span></div>
+      </div>
+      <p class="muted" style="margin-top:22px;max-width:62ch">
+        A typical main house runs ten to twenty cases a month: evian and Acqua Panna for
+        every day, S.Pellegrino for the table and guests, Saratoga where the bottle is on
+        display, and a case of small evian for cars and the pool. For twenty cases and up,
+        or for more than one property, I'll put a proposal together rather than have you
+        guess. <a href="/#waters">See the four waters</a> or
+        <a href="/#order">compose an order yourself</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="section mist">
+    <div class="wrap grid-2">
+      <div>
+        <h2>Why the founder is the one at your gate</h2>
+        <p style="margin-top:16px;max-width:56ch">
+          I'm Matthew. Sorgente is small on purpose: each route is capped at twenty homes so the
+          same person — me — is the one who knows your gate code, your pantry, and your
+          housekeeper's name. I'm an Ironman, which mostly means I show up when I say I will and
+          I don't mind carrying twenty cases up a flight of stairs.
+        </p>
+        <p style="margin-top:14px;max-width:56ch">
+          For a house manager, that translates to one thing: when something changes, you text
+          one number and it's handled — no portal, no support line, no ticket.
+        </p>
+      </div>
+      <img src="/founder.jpg" alt="Matthew, founder of Sorgente" style="max-width:340px;border-radius:2px;box-shadow:0 18px 44px rgba(20,43,36,0.18)" />
+    </div>
+  </section>
+
+  <InquiryForm
+    kind="estate"
+    heading="Request a proposal"
+    intro="Tell me a little about the property and I'll come back with a suggested case mix, your route day, and the monthly figure — usually the same afternoon."
+  />
+</Base>

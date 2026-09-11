@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import Stripe from "stripe";
+import { notify } from "../../lib/notify";
 
 export const prerender = false;
 
@@ -32,29 +33,46 @@ export const POST: APIRoute = async ({ request }) => {
       const session = event.data.object as Stripe.Checkout.Session;
       // New customer: session.customer_details has name/email/phone,
       // session.metadata.first_delivery_date has the date they picked.
-      const tag = session.metadata?.tasting === "1" ? "TASTING CASE ORDER:" : "NEW SUBSCRIPTION:";
-      console.log(
-        tag,
-        JSON.stringify(session.metadata ?? {}),
-        session.customer_details?.name,
-        session.customer_details?.email,
-        "first delivery:",
-        session.metadata?.first_delivery_date
+      const m = session.metadata ?? {};
+      const isTasting = m.tasting === "1";
+      await notify(
+        isTasting ? `Tasting Case order — ${m.name || session.customer_details?.name}` : `New subscription — ${session.customer_details?.name}`,
+        {
+          name: m.name || session.customer_details?.name,
+          phone: m.phone || session.customer_details?.phone,
+          email: session.customer_details?.email,
+          address: m.address || shippingLine(session),
+          route_day: m.route_day,
+          first_delivery: m.first_delivery_date || m.delivery_date,
+          gate_notes: m.gate_notes,
+          total: session.amount_total != null ? `$${(session.amount_total / 100).toFixed(2)}` : undefined,
+          stripe: `https://dashboard.stripe.com/${isTasting ? "payments" : "subscriptions"}`,
+        }
       );
-      // TODO: send yourself a notification email / add row to a sheet.
       break;
     }
     case "invoice.paid": {
       const invoice = event.data.object as Stripe.Invoice;
-      console.log("RENEWAL PAID:", invoice.customer_email, invoice.id);
-      // TODO: this is your monthly "pack this order" trigger.
+      // Monthly "pack this order" trigger
+      await notify(`Renewal paid — ${invoice.customer_name ?? invoice.customer_email}`, {
+        customer: invoice.customer_name,
+        email: invoice.customer_email,
+        amount: `$${((invoice.amount_paid ?? 0) / 100).toFixed(2)}`,
+        invoice: invoice.hosted_invoice_url,
+      });
       break;
     }
     case "customer.subscription.deleted": {
-      console.log("SUBSCRIPTION CANCELLED:", event.data.object.id);
+      const sub = event.data.object as Stripe.Subscription;
+      await notify("Subscription cancelled", { subscription: sub.id, cases: sub.metadata?.total_cases, zip: sub.metadata?.zip });
       break;
     }
   }
 
   return new Response("ok", { status: 200 });
 };
+
+function shippingLine(session: any): string {
+  const a = session?.shipping_details?.address ?? session?.collected_information?.shipping_details?.address;
+  return a ? [a.line1, a.city, a.postal_code].filter(Boolean).join(", ") : "";
+}

@@ -1,0 +1,77 @@
+---
+import SiteHead from "../components/SiteHead.astro";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;            // e.g. "/estates"
+  image?: string;          // absolute path under /public
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  bar?: boolean;
+}
+const { title, description, path, image = "/collection.jpg", jsonLd, bar = true } = Astro.props;
+const site = "https://www.sorgentepb.com";
+const url = site + path;
+const nav = [
+  ["/#waters", "The waters"],
+  ["/estates", "For estates"],
+  ["/yachts", "Yachts"],
+  ["/faq", "FAQ"],
+  ["/tasting", "Tasting Case"],
+];
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <SiteHead />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={url} />
+    <link rel="icon" href="/favicon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Sorgente" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url} />
+    <meta property="og:image" content={site + image} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+  </head>
+  <body>
+    {bar && (
+      <a class="bar" href="/tasting">Begin with the Tasting Case — six bottles, $50, credited toward your first month&nbsp;&nbsp;→</a>
+    )}
+    <header class="wrap masthead">
+      <a class="brand" href="/"><img src="/logo.png" alt="" /><span>Sorgente</span></a>
+      <nav class="nav" aria-label="Site">
+        {nav.map(([href, label]) => (
+          <a href={href} aria-current={href === path ? "page" : undefined}>{label}</a>
+        ))}
+        <a class="nav-text" href="sms:+15614010695">Text (561) 401-0695</a>
+      </nav>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer>
+      <div class="wrap foot">
+        <span>Sorgente — private water delivery, Palm Beach</span>
+        <nav aria-label="Footer">
+          <a href="/estates">For estates</a>
+          <a href="/yachts">Yachts</a>
+          <a href="/faq">FAQ</a>
+          <a href="/policies">Policies</a>
+          <a href="sms:+15614010695">(561) 401-0695</a>
+          <a href="mailto:matthew@growpalmbeach.com">matthew@growpalmbeach.com</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

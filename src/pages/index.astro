@@ -9,7 +9,35 @@ import SiteHead from "../components/SiteHead.astro";
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Sorgente — Private Water Delivery, Palm Beach</title>
     <meta name="description" content="Evian, Acqua Panna, S.Pellegrino, and Saratoga by the case. Monthly delivery, carried in and put away. Serving Palm Beach County." />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💧</text></svg>" />
+    <link rel="canonical" href="https://www.sorgentepb.com/" />
+    <link rel="icon" href="/favicon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Sorgente" />
+    <meta property="og:title" content="Sorgente — Private Water Delivery, Palm Beach" />
+    <meta property="og:description" content="Fine water, in glass, stocked in your home every month. evian, Acqua Panna, S.Pellegrino, and Saratoga — carried in, put away, empties taken." />
+    <meta property="og:url" content="https://www.sorgentepb.com/" />
+    <meta property="og:image" content="https://www.sorgentepb.com/collection.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      name: "Sorgente",
+      description: "Private bottled water delivery and in-home stocking for Palm Beach County residences and yachts.",
+      url: "https://www.sorgentepb.com",
+      telephone: "+1-561-401-0695",
+      email: "matthew@growpalmbeach.com",
+      image: "https://www.sorgentepb.com/collection.jpg",
+      logo: "https://www.sorgentepb.com/logo.png",
+      priceRange: "$$$",
+      areaServed: ["Palm Beach", "Jupiter Island", "Juno Beach", "Manalapan", "Boca Raton", "Palm Beach County"],
+      address: { "@type": "PostalAddress", addressLocality: "North Palm Beach", addressRegion: "FL", addressCountry: "US" },
+      makesOffer: [
+        { "@type": "Offer", name: "Monthly water delivery", price: "50", priceCurrency: "USD", description: "Per case, 5-case minimum. $45 per case at 10+." },
+        { "@type": "Offer", name: "The Tasting Case", price: "50", priceCurrency: "USD", url: "https://www.sorgentepb.com/tasting" },
+      ],
+    })} />
   </head>
   <body style="margin:0">
     <OrderPage client:load />

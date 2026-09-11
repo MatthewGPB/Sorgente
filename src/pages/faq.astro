@@ -1,0 +1,103 @@
+---
+import Base from "../layouts/Base.astro";
+
+const groups = [
+  {
+    title: "Delivery",
+    items: [
+      ["Which day will my water come?",
+       "Sorgente delivers by neighborhood route on Tuesdays, Thursdays, and Saturdays. Your zip code sets your day, and it stays the same every month so staff always know when to expect it. Enter your zip on the order page and the calendar shows your dates."],
+      ["Does someone need to be home?",
+       "No. Give us standing instructions once — a gate code, a side entrance, where the cases go — and we follow them every time. If there's no access, we leave the cases in a covered spot you've named and text a photo."],
+      ["What time will you arrive?",
+       "You'll get a text the morning of with a window. If you need a tighter window because of staff hours or a gate schedule, tell us and we'll plan the route around it."],
+      ["How far in advance do I need to order?",
+       "Two days. Your first delivery is the first route day at least 48 hours out; after that it repeats monthly without you doing anything."],
+      ["Where exactly do you deliver?",
+       "Palm Beach County — Jupiter Island and Juno Beach south through Palm Beach, Manalapan, and Boca Raton — plus marinas and private docks. Outside the county, larger standing orders can travel; write us."],
+    ],
+  },
+  {
+    title: "In the house",
+    items: [
+      ["Where do you put it?",
+       "Wherever you keep your water: pantry, butler's pantry, bar, garage fridge, guest house. Tell us once. Cases are carried in and put away — we don't leave them on the porch."],
+      ["Does the water arrive chilled?",
+       "Cases arrive at room temperature, the way the producers ship them. If you'd like, we'll put a few bottles straight into the fridge on each delivery so the first pour is cold — just add it to your standing instructions."],
+      ["What happens to the empty bottles?",
+       "Empty glass from the previous month leaves with us on the same trip. Keep the empties together where the full cases go and we'll take them. Nothing accumulates."],
+      ["Is everything glass?",
+       "Every bottle is glass except the 500 ml evian, which is plastic on purpose — for cars, boats, the gym, and poolside, where glass isn't welcome."],
+    ],
+  },
+  {
+    title: "The waters",
+    items: [
+      ["Why these four?",
+       "They cover the whole range, from featherlight to full-bodied: Saratoga (very low mineral content, crisp), Acqua Panna (soft, naturally alkaline), evian (balanced, the house pour), and S.Pellegrino (the sparkling, calcium-rich and structured). Most homes run one still for every day, a second for the table, and S.Pellegrino for guests."],
+      ["Can I get a different water?",
+       "Ask. If it's imported in glass and available through our distributors, we can usually add it to a standing order at ten cases or more."],
+      ["Is Palm Beach tap water unsafe?",
+       "No — it's perfectly safe. This isn't about safety. It's about what you serve at a table, which is why the waters are chosen for taste and presentation, not filtration."],
+      ["Can I change my mix month to month?",
+       "Yes, by text. Changes take effect on your next delivery. Many homes shift toward more sparkling in season and more small evian in summer."],
+    ],
+  },
+  {
+    title: "Billing and account",
+    items: [
+      ["How does billing work?",
+       "Monthly, on the anniversary of your first order, through Stripe. Card on file; invoices by email. We never see or store your card details."],
+      ["What does it cost?",
+       "$50 per case, any water, with a five-case minimum. Ten cases or more is $45 per case — the estate rate — every month. Delivery, stocking, and glass pickup are included; there's no delivery fee."],
+      ["Can I pause when I travel or close the house?",
+       "Yes. Text at least two days before your delivery and we hold your subscription with no charge until you're back. Seasonal residents pause for the summer and resume in the fall."],
+      ["How do I cancel?",
+       "Text or email with two days' notice before your next billing date. No fees, no contract, no questions."],
+      ["What's the Tasting Case?",
+       "Six bottles across all four waters for $50, delivered on your route day. If you continue to a monthly order, the $50 is credited in full to your first month. If not, keep it a one-time case."],
+      ["Do you work with house managers, family offices, or yacht crews?",
+       "Yes — that's most of what we do. See the pages for estates and yachts, or text with what you need."],
+    ],
+  },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: groups.flatMap((g) =>
+    g.items.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } }))
+  ),
+};
+---
+<Base
+  title="FAQ — Sorgente Private Water Delivery, Palm Beach"
+  description="Delivery days, access, where the water goes, empties, billing, pausing for the season — everything a Palm Beach household or house manager asks before the first order."
+  path="/faq"
+  jsonLd={jsonLd}
+>
+  <section class="wrap hero" style="padding-bottom:16px">
+    <h1>Questions, answered plainly.</h1>
+    <p class="lede" style="margin-top:18px">
+      If it isn't here, text (561) 401-0695. You'll get a real answer from the person who delivers.
+    </p>
+  </section>
+
+  <section class="wrap narrow faq" style="padding-bottom:96px">
+    {groups.map((g) => (
+      <div class="faq-group">
+        <h2>{g.title}</h2>
+        {g.items.map(([q, a]) => (
+          <details>
+            <summary>{q}</summary>
+            <p>{a}</p>
+          </details>
+        ))}
+      </div>
+    ))}
+    <div class="actions" style="margin-top:48px">
+      <a class="btn" href="/#order">Compose a monthly delivery</a>
+      <a class="btn-ghost" href="/tasting">Or begin with the $50 Tasting Case</a>
+    </div>
+  </section>
+</Base>

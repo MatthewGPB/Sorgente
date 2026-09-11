@@ -1,36 +1,30 @@
 ---
-import SiteHead from "../components/SiteHead.astro";
+import Base from "../layouts/Base.astro";
 ---
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <SiteHead />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Policies — Sorgente</title>
-    <link rel="icon" href="/favicon.png" />
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
-  </head>
-  <body style="margin:0; background:#FBFCFB; font-family:'Jost',sans-serif; color:#16211D;">
-    <div style="max-width:680px; margin:0 auto; padding:48px 24px 90px;">
-      <a href="/" style="display:flex; align-items:center; gap:10px; text-decoration:none;">
-        <img src="/logo.png" alt="" style="height:34px; width:34px;" />
-        <span style="font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:600; color:#1E3D33;">Sorgente</span>
-      </a>
-      <h1 style="font-family:'Cormorant Garamond',serif; font-weight:500; font-size:38px; color:#142B24; margin-top:56px;">Policies</h1>
+<Base
+  title="Policies — Sorgente"
+  description="Delivery, pausing, cancellation, refunds, and payment terms for Sorgente private water delivery in Palm Beach County."
+  path="/policies"
+  bar={false}
+>
+  <section class="wrap narrow" style="padding:48px 24px 96px">
+    <h1>Policies</h1>
 
-      <h2 style="font-family:'Cormorant Garamond',serif; font-size:24px; color:#1E3D33; margin-top:36px;">Delivery</h2>
-      <p style="line-height:1.75; font-weight:300;">Deliveries are made monthly on your chosen date throughout Palm Beach County, beginning no sooner than two days after your order. We carry your cases inside, place them where you keep your water, and remove empty glass bottles from your previous delivery. Someone does not need to be home if we have standing instructions for access or a covered drop location.</p>
+    <h2 style="margin-top:44px;font-size:24px">Delivery</h2>
+    <p style="margin-top:10px">Deliveries are made monthly on your neighborhood's route day (Tuesday, Thursday, or Saturday, set by zip code) throughout Palm Beach County, beginning no sooner than two days after your order. We carry your cases inside, place them where you keep your water, and remove empty glass bottles from your previous delivery. Someone does not need to be home if we have standing instructions for access or a covered drop location.</p>
 
-      <h2 style="font-family:'Cormorant Garamond',serif; font-size:24px; color:#1E3D33; margin-top:36px;">Pausing &amp; changes</h2>
-      <p style="line-height:1.75; font-weight:300;">Traveling or closing the house for the season? Write us at least two days before your delivery date and we will hold your subscription, with no charges, until you return. Case counts and selections can be adjusted anytime and take effect on your next delivery.</p>
+    <h2 style="margin-top:36px;font-size:24px">Pausing &amp; changes</h2>
+    <p style="margin-top:10px">Traveling or closing the house for the season? Text or write us at least two days before your delivery date and we will hold your subscription, with no charges, until you return. Case counts and selections can be adjusted anytime and take effect on your next delivery.</p>
 
-      <h2 style="font-family:'Cormorant Garamond',serif; font-size:24px; color:#1E3D33; margin-top:36px;">Cancellation &amp; refunds</h2>
-      <p style="line-height:1.75; font-weight:300;">Cancel anytime with two days' notice before your next billing date — no fees, no questions. If a delivery ever arrives damaged or short, tell us and we will replace it or credit it in full.</p>
+    <h2 style="margin-top:36px;font-size:24px">Cancellation &amp; refunds</h2>
+    <p style="margin-top:10px">Cancel anytime with two days' notice before your next billing date — no fees, no questions. If a delivery ever arrives damaged or short, tell us and we will replace it or credit it in full. If your first month isn't what we promised — carried in, put away, on your day — text the founder and the month is refunded.</p>
 
-      <h2 style="font-family:'Cormorant Garamond',serif; font-size:24px; color:#1E3D33; margin-top:36px;">Payments &amp; privacy</h2>
-      <p style="line-height:1.75; font-weight:300;">Payments are processed by Stripe; we never see or store your card details. We collect only what a delivery requires — your name, address, phone, and email — and never sell or share it. Billing occurs monthly on the anniversary of your first order.</p>
+    <h2 style="margin-top:36px;font-size:24px">The Tasting Case</h2>
+    <p style="margin-top:10px">The $50 Tasting Case is a one-time purchase with no obligation. If you begin a monthly delivery afterward, the $50 is credited in full to your first invoice. If it isn't the best water you've had at home, text us: the $50 is refunded and you keep the bottles.</p>
 
-      <p style="margin-top:48px; color:#5B6D66; font-size:14px;">Questions — text (561) 401-0695 or matthew@growpalmbeach.com</p>
-    </div>
-  </body>
-</html>
+    <h2 style="margin-top:36px;font-size:24px">Payments &amp; privacy</h2>
+    <p style="margin-top:10px">Payments are processed by Stripe; we never see or store your card details. We collect only what a delivery requires — your name, address, phone, email, and any access instructions you give us — and never sell or share it. Billing occurs monthly on the anniversary of your first order.</p>
+
+    <p class="muted small" style="margin-top:48px">Questions — text (561) 401-0695 or matthew@growpalmbeach.com</p>
+  </section>
+</Base>
