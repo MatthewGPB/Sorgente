@@ -747,9 +747,11 @@ export default function WaterDeliverySite() {
           <a href="/yachts" style={{ color: "inherit", textDecoration: "none" }}>Yachts</a>
           <a href="/faq" style={{ color: "inherit", textDecoration: "none" }}>FAQ</a>
           <a href="/policies" style={{ color: "inherit", textDecoration: "none" }}>Policies</a>
+          <a href="/privacy" style={{ color: "inherit", textDecoration: "none" }}>Privacy Policy</a>
           <a href="sms:+15614010695" style={{ color: "inherit", textDecoration: "none" }}>(561) 401-0695</a>
           <a href="mailto:matthew@growpalmbeach.com" style={{ color: "inherit", textDecoration: "none" }}>matthew@growpalmbeach.com</a>
         </nav>
+        <span>Built by <a href="https://growpalmbeach.com" target="_blank" rel="noopener" style={{ color: "inherit", textDecoration: "underline" }}>Grow Palm Beach</a></span>
       </footer>
     </div>
   );
